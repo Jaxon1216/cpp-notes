@@ -29,10 +29,10 @@ class Solution {
             int ans = 0;
             long long visited = 0 ;
             for(int i = 0; i < nums.size(); i++){
-                if(visited & (1<<nums[i])){
+                if(visited & ((long long)1<<nums[i])){
                     ans ^= nums[i];
                 }
-                else visited |= (1<<nums[i]);// ｜ 有1则1
+                else visited |= ((long long)1<<nums[i]);// ｜ 有1则1
             }
             return ans;
         }
