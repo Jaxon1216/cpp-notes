@@ -25,7 +25,7 @@ public:
     ~LinkedList();
     // 在链表的第 i 个位置插入一个值为 value 的节点
     void insert(int i, eleType value);
-    // 删除链表第 i 个位置的节点
+    // 删除链表第 i 个位置的节点 
     void remove(int i);
     // 查找链表中值为 value 的节点，返回该节点的指针
     ListNode* find(eleType value);
