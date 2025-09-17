@@ -72,7 +72,7 @@ LinkedList::~LinkedList() {
 // 插入函数实现：在指定位置插入新节点
 void LinkedList::insert(int i, eleType value) {
     if (i < 0 || i > size) throw std::out_of_range("Invalid position");
-    ListNode* newNode = new ListNode(value);
+    ListNode* newNode = new ListNode(value);//
     
     // 如果在表头插入（第0个位置）
     if (i == 0) {

@@ -1,33 +1,11 @@
-# 单向链表知识总结
-
-## 目录
-- [1. 链表遍历](#1-链表遍历)
-  - [1.1 斐波那契应用](#11-斐波那契应用)
-  - [1.2 进制转换算法](#12-进制转换算法)
-  - [1.3 快慢指针技巧](#13-快慢指针技巧)
-- [2. 链表删除](#2-链表删除)
-  - [2.1 哑节点技巧](#21-哑节点技巧)
-  - [2.2 值覆盖删除](#22-值覆盖删除)
-  - [2.3 前驱指针删除](#23-前驱指针删除)
-  - [2.4 倒数第N个节点删除](#24-倒数第n个节点删除)
-- [3. 链表插入](#3-链表插入)
-  - [3.1 哈希表去重构建](#31-哈希表去重构建)
-- [4. 链表的递归和迭代](#4-链表的递归和迭代)
-  - [4.1 递归实现](#41-递归实现)
-  - [4.2 迭代实现](#42-迭代实现)
-  - [4.3 递归详解](#43-递归详解)
 
 ---
 
-## 1. 链表遍历
+## 链表遍历
 
-### 1.1 斐波那契应用
-
-**题目链接**：  
-[杭电OJ 2041 - 超级楼梯](https://acm.hdu.edu.cn/submit.php?pid=2041)
-
-**算法解析**：  
-设`f(M)`为从第1级到第M级的走法数，递推公式为：
+### [超级楼梯](https://acm.hdu.edu.cn/submit.php?pid=2041)
+- hint: 走楼梯问题本质是斐波那契数列，每次可以走1步或2步，当前状态由前两个状态决定；
+- 思路: 设f(M)为到达第M级的走法数，最后一步要么从M-1级走1步，要么从M-2级走2步，递推公式f(M)=f(M-1)+f(M-2)；
 
 ```math
 f(M) = f(M-1) + f(M-2)
@@ -38,9 +16,8 @@ f(M) = f(M-1) + f(M-2)
 - 或从M-2级跨2级
 - 边界条件：f(1)=1, f(2)=1
 
-### 1.2 进制转换算法
 
-#### 基本转换原理
+#### 进制转换原理
 
 **通用转换规则**：
 
@@ -56,12 +33,10 @@ f(M) = f(M-1) + f(M-2)
    例：13 → 1101：13/2余1 → 6/2余0 → 3/2余1 → 1/2余1
    ```
 
-#### 链表应用实现
 
-**题目链接**：  
-[LeetCode 1290 - 二进制链表转整数](https://leetcode.cn/problems/convert-binary-number-in-a-linked-list-to-integer/description/)
-
-**算法实现**：  
+### [二进制链表转整数](https://leetcode.cn/problems/convert-binary-number-in-a-linked-list-to-integer/description/)
+- hint: 二进制转十进制需要从高位到低位累加，每遍历一个节点相当于左移一位再加当前位；
+- 思路: 遍历链表，每次将累积结果乘2(左移)再加上当前节点值，模拟二进制转十进制的加权求和过程；
 ```cpp
 int getDecimalValue(ListNode* head) {
     int sum = 0;
@@ -81,14 +56,10 @@ int getDecimalValue(ListNode* head) {
 处理1：sum = 2×2 + 1 = 5  // 最终结果1×2² + 0×2¹ + 1×2⁰
 ```
 
-### 1.3 快慢指针技巧
 
-#### 倒数第K个节点
-
-**题目链接**：  
-[LeetCode 面试题 02.02 - 返回倒数第k个节点](https://leetcode.cn/problems/kth-node-from-end-of-list-lcci/description/)
-
-**算法实现**：
+### [返回倒数第k个节点](https://leetcode.cn/problems/kth-node-from-end-of-list-lcci/description/)
+- hint: 倒数第k个节点可以用快慢指针解决，让快指针先走k步形成窗口；
+- 思路: 快指针先走k步，然后快慢指针同步移动，当快指针到达末尾时慢指针正好指向倒数第k个节点；
 ```cpp
 int kthToLast(ListNode* head, int k) {
     ListNode *fast = head, *slow = head;
@@ -102,12 +73,10 @@ int kthToLast(ListNode* head, int k) {
 }
 ```
 
-#### 链表中点问题
 
-**题目链接**：  
-[LeetCode 876 - 链表的中间结点](https://leetcode.cn/problems/middle-of-the-linked-list/)
-
-**算法实现**：
+### [链表的中间结点](https://leetcode.cn/problems/middle-of-the-linked-list/)
+- hint: 快慢指针经典应用，快指针速度是慢指针的2倍，当快指针到达末尾时慢指针正好在中点；
+- 思路: 快指针每次走2步，慢指针每次走1步，利用速度差找到中间位置，需注意快指针的边界条件；
 ```cpp
 ListNode* middleNode(ListNode* head) {
     ListNode *fast = head, *slow = head;
@@ -126,27 +95,12 @@ ListNode* middleNode(ListNode* head) {
 
 ---
 
-## 2. 链表删除
+## 链表删除
 
-### 2.1 哑节点技巧
+### [删除指定元素](https://leetcode.cn/problems/remove-linked-list-elements/description/)
+- hint: 删除操作需要前驱指针，头节点删除是特殊情况，哑节点可以统一处理；
+- 思路: 创建哑节点指向原链表头，用前驱指针遍历，检查下一个节点是否需要删除，需要则跳过，否则移动前驱指针；
 
-**题目链接**：  
-[删除指定元素](https://leetcode.cn/problems/remove-linked-list-elements/description/)
-
-#### 问题分析
-删除链表中所有值为给定值 val 的节点，需处理多种情况：
-- 普通节点删除
-- 头节点可能被删除
-- 连续多个节点需要删除
-- 空链表或所有节点都需删除
-
-#### 解题思路
-使用 **哑节点 (dummy node)** 技巧简化头节点删除的处理：
-- 创建哑节点作为辅助头节点，其 next 指向原链表头
-- 使用前驱指针 pre 遍历链表，检查下一个节点是否需要删除
-- 若需删除则跳过该节点，否则移动前驱指针
-
-#### 代码实现
 ```cpp
 /**
  * Definition for singly-linked list.
@@ -181,16 +135,9 @@ public:
 - **时间复杂度**：O(n)，需遍历链表一次
 - **空间复杂度**：O(1)，仅使用常数额外空间
 
-#### 关键点
-- 哑节点解决了头节点可能被删除的边界问题
-- 前驱指针 pre 使删除操作更简单，无需额外记录前一个节点
-- 统一的处理逻辑适用于所有节点，包括连续多个需删除的节点
-
-### 2.2 值覆盖删除
-
-**题目链接**：  
-[删除节点值](https://leetcode.cn/problems/delete-node-in-a-linked-list/)
-
+### [删除节点值](https://leetcode.cn/problems/delete-node-in-a-linked-list/)
+- hint: 只给出要删除的节点指针，无法获取前驱，需要巧妙地将下一个节点的值覆盖当前节点；
+- 思路: 将下一个节点的值复制到当前节点，然后删除下一个节点，等效于删除当前节点；
 ```cpp
 class Solution {
 public:
@@ -201,10 +148,8 @@ public:
 };
 ```
 
-### 2.3 前驱指针删除
-
-**题目链接**：  
-[删除重复元素](https://leetcode.cn/problems/remove-duplicates-from-sorted-list/submissions/662037181/)
+  
+### [删除重复元素](https://leetcode.cn/problems/remove-duplicates-from-sorted-list/submissions/662037181/)
 
 ```cpp
 class Solution {
@@ -230,10 +175,7 @@ public:
 };
 ```
 
-### 2.4 倒数第N个节点删除
-
-**题目链接**：  
-[删除链表的倒数第 N 个结点](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/)
+### [删除链表的倒数第 N 个结点](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/)
 
 ```cpp
 class Solution {
@@ -259,13 +201,10 @@ public:
 
 ---
 
-## 3. 链表插入
-
-### 3.1 哈希表去重构建
-
-**题目链接**：  
-[移除重复节点](https://leetcode.cn/problems/remove-duplicate-node-lcci/)
-
+## 链表插入
+ 
+### [移除重复节点](https://leetcode.cn/problems/remove-duplicate-node-lcci/)
+- 哈希表去重
 ```cpp
 class Solution {
 public:
@@ -294,13 +233,9 @@ public:
 
 ---
 
-## 4. 链表的递归和迭代
-
-### 4.1 递归实现
-
-#### 数组链表结合
-**题目链接**：  
-[从尾到头打印链表](https://leetcode.cn/problems/cong-wei-dao-tou-da-yin-lian-biao-lcof/submissions/662069306/)
+## 链表的递归和迭代
+ 
+### [从尾到头打印链表](https://leetcode.cn/problems/cong-wei-dao-tou-da-yin-lian-biao-lcof/submissions/662069306/)
 
 ```cpp
 vector<int> reverseBookList(ListNode* head) {
@@ -320,10 +255,8 @@ vector<int> reverseBookList(ListNode* head) {
     return ans;
 }
 ```
-
-#### 递归链表反转
-**题目链接**：  
-[递进行链表反转](https://leetcode.cn/problems/UHnkqh/)
+  
+### [递进行链表反转](https://leetcode.cn/problems/UHnkqh/)
 
 ```cpp
 class Solution {
@@ -338,9 +271,7 @@ public:
 };
 ```
 
-#### 递归删除元素
-**题目链接**：  
-[从链表中移除节点](https://leetcode.cn/problems/remove-nodes-from-linked-list/description/)
+### [从链表中移除节点](https://leetcode.cn/problems/remove-nodes-from-linked-list/description/)
 
 ```cpp
 class Solution {
@@ -355,9 +286,8 @@ public:
 };
 ```
 
-#### 链表翻倍
-**题目链接**：  
-[链表中数字翻倍](https://leetcode.cn/problems/double-a-number-represented-as-a-linked-list/description/)
+  
+### [链表中数字翻倍](https://leetcode.cn/problems/double-a-number-represented-as-a-linked-list/description/)
 
 ```cpp
 class Solution {
@@ -380,13 +310,9 @@ public:
     }
 };
 ```
-
-### 4.2 迭代实现
-
-#### 迭代链表反转
-**题目链接**：  
-[反转链表](https://leetcode.cn/problems/reverse-linked-list/description/)
-
+ 
+### [反转链表](https://leetcode.cn/problems/reverse-linked-list/description/)
+- 迭代
 ```cpp
 class Solution {
 public:
@@ -405,7 +331,7 @@ public:
 };
 ```
 
-### 4.3 递归详解
+### 递归详解
 
 #### 递归的核心概念
 递归就是**函数调用自己**，但每次调用时处理的是**更小的问题**，直到达到**基础情况**（递归终止条件）。
