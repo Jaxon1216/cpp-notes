@@ -1,7 +1,7 @@
 
 ### [士兵队列问题](https://acm.hdu.edu.cn/showproblem.php?pid=1276)
 - hint: 双队列模拟
-- 学到啥: while使用场景，深入理解dequeue
+- get: while使用场景，深入理解dequeue
 - 约瑟夫变式问题
 ```cpp
 int main() {
@@ -48,36 +48,32 @@ int main() {
 
 
 ### [团队队列](https://acm.hdu.edu.cn/showproblem.php?pid=1387)
-- 思路:
-- 哈希表把成员 `id` 映射到所属团队 `teamId`；维护“团队队列”的队列：当某团队首次入队时，将该团队作为一个整体排到队尾；同队成员后续到来时，直接追加到该团队队尾。
-- 这里用 `Queue<int> q[1001]` 表示“队列中的每个团队”的成员队列；用两个指针 `s` 和 `e` 表示当前有效的团队区间 `[s, e)`（相当于一个队列的头尾索引）。
-- ENQUEUE x：在 `[s, e)` 中线性查找是否已存在 `team[x]` 的团队队列；若找到则把 `x` 追加到该队列；若没找到（`i==e`），把 `x` 放入新团队 `q[e]` 并将 `e++`。
-- DEQUEUE：弹出 `q[s]` 的队首成员；若该团队成员队列为空，则 `s++` 将该团队整体出队。
+- hint:
+- get: ```memset(x,val,sizeof(x))```,辨析```Queue<int> q[1001]```,哈希表？
 
 ```cpp
 // team[x] 存储成员 x 的 teamId，范围按题意预留（这里示例为 1e6）
 int team[1000000];
 
 int main(){
-	int t;                 // 团队数量
-	int cases = 0;         // 用于输出场景编号 "Scenario #k"
+	int t;                 
+	int cases = 0;         
 	while(cin >> t && t){  // 多个测试用例，读到 0 结束
 		cases++;
 		memset(team, 0, sizeof(team));
 
 		// 读入每个团队的成员，建立 id -> teamId 的映射
 		for(int i = 1; i <= t; i++){
-			int n;          // 第 i 个团队的人数
+			int n;          
 			cin >> n;
 			while(n--){
-				int x;      // 成员 id（全局唯一）
+				int x;      
 				cin >> x;
 				team[x] = i; // 记录 x 属于第 i 个团队
 			}
 		}
 
-		// q[s..e) 表示当前在总队列中的“团队顺序”，每个 q[i] 是该团队内的成员队列
-		Queue<int> q[1001];
+		Queue<int> q[1001]; //注意，这个可不是tmd（），这是1001个队列，而不是一个队列；就这个问题半天理解不了；
 		int s = 0, e = 0;   // s 为队头团队索引，e 为队尾后一位（半开区间）
 		string str;
 		cout << "Scenario #" << cases << endl;
@@ -87,13 +83,13 @@ int main(){
 			if(str == "STOP") break;
 
 			if(str == "ENQUEUE"){
-				int x, i;
+				int x, i; // 这个i挺巧妙哈
 				cin >> x; // 待入队的成员 id
 
 				// 在线性扫描当前存在的团队区间，寻找 x 所属团队是否已在队列中
 				for(i = s; i < e; i++){
 					// 用该团队队列的队首元素判断该 q[i] 属于哪个 teamId
-					if(team[q[i].getFront()] == team[x]) break; // 找到所属团队
+					if(team[q[i].getFront()] == team[x]) break; // 找到所属团队，这个i记上了
 				}
 
 				// 将 x 压入找到的团队队列；如果没找到（i==e），则相当于新团队入队
@@ -137,4 +133,25 @@ flowchart TD
     L --> M[输出 val]
     M --> E
     X --> A
+```
+### [ping](https://leetcode.cn/problems/number-of-recent-calls/)
+
+- hint: 照着样例来就行了
+- get: 
+```cpp
+class RecentCounter {
+    queue<int> q;
+public:
+    RecentCounter() {
+        
+    }
+    
+    int ping(int t) {
+        q.push(t);
+        while(t - q.front() > 3000){
+            q.pop();
+        }
+        return q.size();
+    }
+};
 ```
