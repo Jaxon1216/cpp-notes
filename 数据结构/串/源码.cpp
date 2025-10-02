@@ -1,41 +1,28 @@
-#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS // 1) 关闭 MSVC 关于“非安全”C 函数的告警，便于使用如 strcpy 等旧接口
 
 #include <iostream>
-#include <cstring>
+#include <cstring> // 4) 本文件用到的 cstring 函数: strlen, strcpy, strcmp, strcat
 using namespace std;
 
 class String {
 private:
-    // 字符串长度
     size_t length;
-    // 动态分配的字符串内存空间
     char* str;
 
 public:
-    // 构造函数，初始化字符串为空
     String();
-    // 构造函数，初始化字符串为给定的字符串副本
-    String(const char* s);
-    // 拷贝构造函数
-    String(const String& s);
-    // 析构函数，释放动态分配的字符串内存空间
+    String(const char* s); // 2) 与第15行的拷贝构造不同：从 C 字符串构造（入参 const char*）
+    String(const String& s); // 2) 拷贝构造：用同类对象构造（入参 const String&）
     ~String();
-    // 获取字符串长度的函数
     size_t getLength() const;
-    // 访问字符串中指定索引位置的字符的函数
     char operator[](size_t index) const;
-    // 重载赋值运算符，将字符串赋值给当前字符串
     String& operator=(const String& s);
-    // 重载等于运算符，比较两个字符串是否相等
     bool operator==(const String& s) const;
-    // 重载不等于运算符，比较两个字符串是否不相等
     bool operator!=(const String& s) const;
-    // 字符串拷贝函数
     String copy() const;
-    // 字符串拼接函数
     String operator+(const String& s) const;
 
-    friend ostream& operator<<(ostream& out, const String& s);
+    friend ostream& operator<<(ostream& out, const String& s); // 3) 友元：允许此函数访问私有成员（如 s.str）
 };
 
 
@@ -47,15 +34,15 @@ String::String() {
 }
 
 String::String(const char* s) {
-    length = strlen(s);
+    length = strlen(s); // 4) cstring: strlen
     str = new char[length + 1];
-    strcpy(str, s);
+    strcpy(str, s); // 4) cstring: strcpy
 }
 
 String::String(const String& s) {
     length = s.length;
     str = new char[length + 1];
-    strcpy(str, s.str);
+    strcpy(str, s.str); // 4) cstring: strcpy
 }
 
 String::~String() {
@@ -71,21 +58,21 @@ char String::operator[](size_t index) const {
 }
 
 String& String::operator=(const String& s) {
-    if (this != &s) {
+    if (this != &s) { // 5) this 是“当前对象”的指针；&s 是右值对象地址；防止自赋值
         delete[] str;
         length = s.length;
         str = new char[length + 1];
         strcpy(str, s.str);
     }
-    return *this;
+    return *this; // 6) *this 是“当前对象本身”；返回引用以支持 a=b=c 的链式赋值
 }
 
 bool String::operator==(const String& s) const {
-    return strcmp(str, s.str) == 0;
+    return strcmp(str, s.str) == 0; // 4) cstring: strcmp
 }
 
 bool String::operator!=(const String& s) const {
-    return strcmp(str, s.str) != 0;
+    return strcmp(str, s.str) != 0; // 4) cstring: strcmp
 }
 
 String String::copy() const {
@@ -97,14 +84,14 @@ String String::operator+(const String& s) const {
     String result;
     result.length = length + s.length;
     result.str = new char[result.length + 1];
-    strcpy(result.str, str);
-    strcat(result.str, s.str);
+    strcpy(result.str, str); // 4) cstring: strcpy
+    strcat(result.str, s.str); // 4) cstring: strcat
     return result;
 }
 
-ostream& operator<<(ostream& out, const String& s) {
-    out << s.str;
-    return out;
+ostream& operator<<(ostream& out, const String& s) { // 3) 输出运算符重载：返回 ostream& 以支持链式 <<
+    out << s.str; // 3) 直接访问私有成员 str，因第25行声明其为友元
+    return out; // 3) 返回输出流自身，允许 cout << a << b 连续输出
 }
 
 int main() {
