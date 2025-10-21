@@ -136,27 +136,101 @@ struct ListNode {
 - 1) 第一行：`#define _CRT_SECURE_NO_WARNINGS`
   - 作用：在 MSVC 编译器里关闭“使用不安全 C 函数”的警告，例如 `strcpy`、`strcat`。
   - 好处：示例代码可直接编译运行；实际项目建议改用更安全的变体（如 `strcpy_s`）。
+  - 举例：
+    ```cpp
+    // 目标：把 "hello" 复制到 dst
+    char dst[6]{};                // 预留 6 个字节（5 个可见字符 + 1 个'\0'）
+    // 传统接口：在 MSVC 下会有“非安全”警告
+    strcpy(dst, "hello");
+    // 更安全的 MSVC 扩展接口（推荐在 MSVC 下使用）：
+    // strcpy_s(dst, sizeof(dst), "hello");
+    ```
 
 - 2) 第14行 vs 第15行构造函数
   - 第14行 `String(const char* s)`：从 C 风格字符串构造对象（形如字面量 "abc"）。
   - 第15行 `String(const String& s)`：拷贝构造，从同类对象拷贝生成新对象。
   - 区别在于参数类型与用途不同：一个接收 `const char*`，一个接收 `const String&`。
+  - 举例（它们何时被调用）：
+    ```cpp
+    String a("abc");     // 调用 const char* 构造（第14行）
+    String b = a;          // 拷贝构造（第15行）
+    String c(a);           // 也是拷贝构造（第15行）
+    String d = "xyz";     // 隐式把字面量转换为临时 String，再用于初始化 d
+    ```
+  - 再举一个“隐式转换”例子：
+    ```cpp
+    String s("12");
+    // operator+ 需要一个 String；右边是 "34" 的 const char*
+    // 因为存在 String(const char*), 字面量会被“自动转换”为临时 String
+    String t = s + "34";  // 实际执行：s.operator+(String("34"))
+    ```
 
 - 3) 第25行友元函数与第92-94行
   - 友元声明：`friend ostream& operator<<(ostream& out, const String& s);`
   - 含义：允许该非成员函数访问 `String` 的私有成员（例如 `s.str`）。
+  - 为什么需要“非成员”？因为 `operator<<` 左边是 `ostream`（`cout`），不是 `String`，所以做成员函数不合适。
   - 第92-94行实现展示了它如何直接访问 `s.str` 并返回 `ostream&` 以支持链式 `<<`。
+  - 代码位置引用：
+    ```25:26:/Users/jiangxu/Documents/code/cpp/数据结构/串/源码.cpp
+    friend ostream& operator<<(ostream& out, const String& s); // 3) 友元：允许此函数访问私有成员（如 s.str）
+    ```
+    ```92:95:/Users/jiangxu/Documents/code/cpp/数据结构/串/源码.cpp
+    ostream& operator<<(ostream& out, const String& s) { // 3) 输出运算符重载：返回 ostream& 以支持链式 <<
+        out << s.str; // 3) 直接访问私有成员 str，因第25行声明其为友元
+        return out; // 3) 返回输出流自身，允许 cout << a << b 连续输出
+    }
+    ```
+  - 使用举例：
+    ```cpp
+    String s("hello");
+    cout << s << " world\n";  // 等价于 operator<<(operator<<(cout, s), " world\n")
+    ```
 
 - 4) 本文件用到的 `<cstring>` 内容
   - `strlen`：计算 C 字符串长度（不含终止符 `\0`）。
   - `strcpy`：把源 C 字符串拷贝到目标缓冲区。
   - `strcmp`：按字典序比较两个 C 字符串，相等返回 0。
   - `strcat`：把源 C 字符串追加到目标字符串末尾。
+  - 小心事项：
+    - 为 C 字符串分配空间时，务必预留终止符：长度 `n` → 申请 `n + 1`。
+    - `strcpy/strcat` 不会自动检查目标缓冲区大小，可能导致越界；务必保证足够空间。
+    - `strcmp(a,b)` 返回值：`0` 表示相等；`<0` 表示 `a<b`；`>0` 表示 `a>b`。
+  - 举例：
+    ```cpp
+    const char* src = "abc";
+    size_t n = strlen(src);        // n == 3
+    char* buf = new char[n + 1]{}; // 预留 '\0'
+    strcpy(buf, src);              // buf -> "abc\0"
+    strcat(buf, "X");             // 需要再多 1 个空间，否则可能越界！
+    delete[] buf;
+    ```
+  - C++ 建议：尽量使用 `std::string` 来避免手工管理 `\0` 与缓冲区大小。
 
 - 5) 第61行的 `this`
   - `this` 是指向“当前对象”的指针，类型为 `String*`。
   - 用法：`if (this != &s)` 用来判断是否自我赋值（同一对象），避免先 `delete[]` 自己的数据导致错误。
+  - 举例（没有自赋值检查时的风险）：
+    ```cpp
+    // 假设 a = a; 且没有做 this 检查：
+    // 1) 先 delete[] str;  会把 a 当前的缓冲区释放
+    // 2) 再 strcpy(str, s.str); 但 s 和 *this 是同一个对象，源数据已被删，导致未定义行为
+    ```
+  - 正确写法（源码第61行所在的 if 分支）：
+    ```cpp
+    String& String::operator=(const String& s) {
+        if (this == &s) return *this; // 自赋值直接返回，安全
+        // 否则再释放、再分配、再拷贝
+        // ...
+        return *this;
+    }
+    ```
 
 - 6) 第67行的 `*this`
   - `*this` 是“当前对象本身”的引用（把指针解引用后得到对象）。
   - 返回 `*this`（类型 `String&`）可支持链式赋值：`a = b = c;`。
+  - 链式赋值的原理：
+    ```cpp
+    String a("A"), b("B"), c("C");
+    a = b = c;     // 先执行 b = c（返回 b 的引用），再执行 a = (返回值)
+    ```
+  - 如果返回的是“值”（而不是引用），链式赋值会产生临时对象，既低效又可能导致行为不符合预期；因此应返回 `*this` 的引用。
