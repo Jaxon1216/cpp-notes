@@ -1,15 +1,3 @@
-## PTA 十月刷题
-
-- **目录**:
-  - [题目：约瑟夫环](#题目约瑟夫环)
-
----
-
-### 题目：约瑟夫环
-
-- **简介**: 经典约瑟夫环问题。输入 `n` 和 `k`，按照报数 `k` 出局，记录每一轮出局顺序。
-- 暴力
-```cpp
 #include<iostream>
 #include<vector>
 using namespace std;
@@ -26,7 +14,8 @@ int main(){
         if(cnt == k){
             result.push_back(people[pos]);
             people.erase(people.begin()+pos);//删除当前位置的人，注意写法
-            cnt = 0;   
+            cnt = 0;
+        
 //当最后一个人出局时：
 // people 删除最后一个元素后变成空数组
 // 但代码继续执行 if (index >= people.size())
@@ -49,20 +38,37 @@ int main(){
     }
     return 0; 
 }
-```
-- 数学方法
-```cpp
+
+
 //引入数学方法，解决约瑟夫环问题
 // 基础情况：
-// 当 n=1 时：f(1, k) = 0（只有一个人，他肯定是幸存者）
-// 递推关系：
-// 第一轮出局的位置是：(k-1) % n
-// 剩下 n-1 个人，重新编号：
-// 原来的 (k % n) 号变成新的 0 号
-// 原来的 (k+1) % n 号变成新的 1 号
-// ...
-// 所以：f(n, k) = (f(n-1, k) + k) % n
 
+// 当 n=1 时：f(1, k) = 0（只有一个人，他肯定是幸存者）
+
+// 递推关系：
+
+// 第一轮出局的位置是：(k-1) % n
+
+// 剩下 n-1 个人，重新编号：
+
+// 原来的 (k % n) 号变成新的 0 号
+
+// 原来的 (k+1) % n 号变成新的 1 号
+
+// ...
+
+// 所以：f(n, k) = (f(n-1, k) + k) % n
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    int n, k;
+    cin >> n >> k;
+    
+    vector<int> result;
+    
+    // 数学方法：依次计算每一轮出局的人
     int pos = 0;  // 当前位置（从0开始编号）
     
     for (int i = n; i >= 1; i--) {
@@ -75,4 +81,12 @@ int main(){
         // 注意：这里我们不需要实际删除，因为数学上已经处理了
     }
     
-```
+    // 输出结果
+    for (int i = 0; i < n; i++) {
+        cout << result[i];
+        if (i != n - 1) cout << " ";
+    }
+    cout << endl;
+    
+    return 0;
+}
