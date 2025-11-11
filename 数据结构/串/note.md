@@ -24,7 +24,7 @@ gets(s);//c11之后就被删了
 - 检查 `'\0'`（空字符）而不是空格,空格是` `;
 - 或者`s[i] = toupper(s[i])`,这个在`<cctype>`
 
-## [找最大元素](https://acm.hdu.edu.cn/showproblem.php?pid=2025)
+## [x] [找最大元素](https://acm.hdu.edu.cn/showproblem.php?pid=2025)
 >思路：直接模拟就行
 
 ## [判断棋盘颜色](https://leetcode.cn/problems/determine-color-of-a-chessboard-square/description/)
@@ -42,7 +42,7 @@ for(int i = 0; i < s.size()-2; i++)
 ```
 题目说`1 <= s.length <= 100`，在看有个`s.size()-2`,当字符串小于3时，会变成一个很大的无符号数（因为 `size()`返回的是 `size_t`类型，是无符号整数
 
-## [字符串操作](https://leetcode.cn/problems/final-value-of-variable-after-performing-operations/description/)
+## [x] [字符串操作](https://leetcode.cn/problems/final-value-of-variable-after-performing-operations/description/)
 >直接模拟即可
 - 两个不同操作得出一样的结果用`||`;
 
@@ -67,10 +67,10 @@ string defangIPaddr(string address) {
     }
 ```
 
-## [一对](https://leetcode.cn/problems/count-asterisks/description/)
+## [x] [一对](https://leetcode.cn/problems/count-asterisks/description/)
 >两个竖线为一对，之前书上有类似的，创建一个标志变量加上！
 
-## [判断两符号数量相等，先A后B，相等为一组](https://leetcode.cn/problems/split-a-string-in-balanced-strings/description/)
+## [x] [判断两符号数量相等，先A后B，相等为一组](https://leetcode.cn/problems/split-a-string-in-balanced-strings/description/)
 >思路: 最开始想用两数统计次数，相等就输出然后再重置，又想到二元关系，用加一减一估计更好。
 
 ## [动态口令](https://leetcode.cn/problems/zuo-xuan-zhuan-zi-fu-chuan-lcof/description/)
@@ -80,4 +80,108 @@ string result;
 int len = password.size();
 for(int i = 0; i < len; i++)
     result += password[(i+target)%len];
+```
+
+## [x] [统计vector中的string句子中的单词个数](https://leetcode.cn/problems/maximum-number-of-words-found-in-sentences/)
+>思路：最开始cnt为0，遍历，跟每个句子的temp比较,聪明的我发现单词数就是空格加1；
+
+## ⚠️ [字符串的比较](https://leetcode.cn/problems/count-the-number-of-consistent-strings/description/)
+>思路：要计数就得有计数器，至于比较，新写一个函数并且新开一个字符数组？试试
+
+#### set
+```cpp
+class Solution {
+public:
+    int countConsistentStrings(string allowed, vector<string>& words) {
+        unordered_set<char> allowedSet(allowed.begin(), allowed.end());
+        int count = 0;
+        
+        for (const string& word : words) {
+            unordered_set<char> wordSet(word.begin(), word.end());
+            bool consistent = true;
+            
+            for (char c : wordSet) {
+                if (allowedSet.find(c) == allowedSet.end()) {
+                    consistent = false;
+                    break;
+                }
+            }
+            
+            if (consistent) {
+                count++;
+            }
+        }
+        
+        return count;
+    }
+};
+```
+#### bool数组
+```
+class Solution {
+public:
+    int countConsistentStrings(string allowed, vector<string>& words) {
+        bool allowedChars[26] = {false};
+        
+        // 标记allowed中的字符
+        for (char c : allowed) {
+            allowedChars[c - 'a'] = true;
+        }
+        
+        int count = 0;
+        
+        for (const string& word : words) {
+            bool consistent = true;
+            
+            // 检查单词中的每个字符
+            for (char c : word) {
+                if (!allowedChars[c - 'a']) {
+                    consistent = false;
+                    break;
+                }
+            }
+            
+            if (consistent) {
+                count++;
+            }
+        }
+        
+        return count;
+    }
+};
+```
+### 遍历
+```cpp
+class Solution {
+public:
+    int countConsistentStrings(string allowed, vector<string>& words) {
+        int count = 0;
+        
+        for (const string& word : words) {
+            bool consistent = true;
+            
+            for (char c : word) {
+                // 在allowed中查找当前字符
+                bool found = false;
+                for (char a : allowed) {
+                    if (a == c) {
+                        found = true;
+                        break;
+                    }
+                }
+                
+                if (!found) {
+                    consistent = false;
+                    break;
+                }
+            }
+            
+            if (consistent) {
+                count++;
+            }
+        }
+        
+        return count;
+    }
+};
 ```
