@@ -87,21 +87,33 @@ for(int i = 0; i < len; i++)
 
 ## ⚠️ [字符串的比较](https://leetcode.cn/problems/count-the-number-of-consistent-strings/description/)
 >思路：要计数就得有计数器，至于比较，新写一个函数并且新开一个字符数组？试试
-
+>很遗憾，做不出来，参考以下
 #### set
 ```cpp
 class Solution {
 public:
+    class Solution {
+public:
     int countConsistentStrings(string allowed, vector<string>& words) {
         unordered_set<char> allowedSet(allowed.begin(), allowed.end());
+        //创建一个名为 allowedSet 的集合，它包含了 allowed 字符串中的所有字符。
+        //allowed.begin() 和 allowed.end() 表示整个字符串的范围
+        //集合会自动去除重复字符（如果有的话）
+        //集合的作用是快速判断某个字符是否存在
+
+        //find()是集合的一个方法，用于在集合中查找指定的元素：
+        //如果找到了元素 c，返回一个指向该元素的迭代器
+        //如果没找到元素 c，返回 allowedSet.end()
+        //end()返回一个特殊的迭代器，它不指向任何实际元素，而是指向集合的"末尾之后"的位置。可以把它理解为"无效位置"或"结束标志"。
+
         int count = 0;
         
         for (const string& word : words) {
-            unordered_set<char> wordSet(word.begin(), word.end());
             bool consistent = true;
-            
-            for (char c : wordSet) {
+            // 直接遍历单词的每个字符
+            for (char c : word) {
                 if (allowedSet.find(c) == allowedSet.end()) {
+                    //相等就说明没找到
                     consistent = false;
                     break;
                 }
@@ -115,9 +127,10 @@ public:
         return count;
     }
 };
+
 ```
 #### bool数组
-```
+```cpp
 class Solution {
 public:
     int countConsistentStrings(string allowed, vector<string>& words) {
@@ -151,6 +164,16 @@ public:
 };
 ```
 ### 遍历
+
+```cpp
+for (每个单词) {
+    for (单词中的每个字符) {
+        检查这个字符是否在allowed中
+    }
+    如果所有字符都在allowed中，计数加1
+}
+```
+
 ```cpp
 class Solution {
 public:
@@ -158,8 +181,9 @@ public:
         int count = 0;
         
         for (const string& word : words) {
+            //每个单词
             bool consistent = true;
-            
+            //是否合法
             for (char c : word) {
                 // 在allowed中查找当前字符
                 bool found = false;
@@ -167,11 +191,13 @@ public:
                     if (a == c) {
                         found = true;
                         break;
+                        //注意是a在变换，a找到了就不用换allowed的其他字符了
                     }
                 }
                 
                 if (!found) {
                     consistent = false;
+                    //只要一个单词没找到，直接退出循环标记false
                     break;
                 }
             }
