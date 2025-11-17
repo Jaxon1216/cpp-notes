@@ -582,6 +582,7 @@ printf("%s", s.c_str());
 | 取子串                 | `.substr(起始下标, 子串长度)` | `string sub = s.substr(2, 10);` |
 | 查找字符串             | `.find(字符串, 起始下标)`     | `int pos = s.find("awa");`      |
 
+
 #### 数值与字符串互转（C++11）
 
 | 源                                             | 目的        | 函数        |
@@ -759,7 +760,7 @@ for (set<int>::iterator it = st.begin(); it != st.end(); ++it)
 - `prev(it)`：返回 it 的前一个迭代器
 - `next(it)`：返回 it 的后一个迭代器
 
-对于其他容器，由于其结构特性，上面的功能不一定都有（例如 set 的迭代器是不能相减求距离的）
+对于其他容器，由于其结构特性，上面的功能不一定都有（例如 **set** 的迭代器是不能相减求距离的）
 
 ## 3.4 常见问题
 
@@ -792,6 +793,7 @@ vector<int> a{1, 2, 3, 4};
 for (auto it = a.begin(); it != a.end(); ++it)
     if (*it == 4)
         a.erase(it);
+    //删了4，前移一位，it = a.end(),然后自增后越界
 ```
 
 <center><b>建议：如无必要，别用迭代器操作容器。（遍历与访问没关系）</b></center>
@@ -902,6 +904,7 @@ sort(arr.begin(), arr.end(), greater<int>());
 
 **注意：**如果 $a=b$，比较器函数必须返回 `false`
 
+**例：** 要求对多个二元组进行如下排序：按照第二个数从小到大排；如果第二个数相同，则按照第一个数从大到小排；
 ```cpp
 bool cmp(pair<int, int> a, pair<int, int> b)
 {
@@ -932,7 +935,7 @@ int main()
 
 返回的是迭代器，如何转成下标索引呢？减去头迭代器即可。
 
-**用法示例**
+**示例**
 
 ```cpp
 template< class ForwardIt, class T >
@@ -1020,7 +1023,10 @@ ForwardIt unique( ForwardIt first, ForwardIt last );
 ```cpp
 vector<int> arr{1, 2, 1, 4, 5, 4, 4};
 sort(arr.begin(), arr.end());
+// sort 后  1 1 2 4 4 4 5
+//unique后  1 2 4 5 指向->4 4 5 
 arr.erase(unique(arr.begin(), arr.end()), arr.end());
+//unique返回的是指向去重后容器中不重复序列末尾的下一个位置的迭代器。
 ```
 
 ## 4.8 数学函数
@@ -1039,26 +1045,77 @@ arr.erase(unique(arr.begin(), arr.end()), arr.end());
 | $f(x)=\left<x\right>$   | `round(2.1)` |
 
 **注意事项**
+## 浮点数误差问题
 
-由于浮点误差，有些的数学函数的行为可能与预期不符，导致 WA。如果你的操作数都是整型，那么用下面的写法会更稳妥。
+在《算法竞赛入门经典》第二章例题2-1中提到，浮点数运算存在精度误差。例如，整数 1 可能因为误差变成 0.999999999，此时 `floor` 的结果会是 0 而非预期的 1。为避免这类问题，可以使用四舍五入：`floor(sqrt(x) + 0.5)`。
 
-> 原文地址：https://codeforces.com/blog/entry/107717
+**更重要的是**：当操作数都是整型时，应当避免使用浮点数运算，直接使用整数运算更加稳妥和精确，可以避免因浮点误差导致的 WA（Wrong Answer）。
 
-- $\lfloor\frac{a}{b}\rfloor$
-  - 别用：`floor(1.0 * a / b)`
-  - 要用：`a / b`
-- $\lceil\frac{a}{b}\rceil$
-  - 别用：`ceil(1.0 * a / b)`
-  - 要用：`(a + b - 1) / b`  （$\lceil\frac{a}{b}\rceil=\lfloor\frac{a+b-1}{b}\rfloor$）
-- $\lfloor\sqrt a\rfloor$
-  - 别用：`(int) sqrt(a)`
-  - 要用：二分查找 https://io.zouht.com/7.html
-- $a^b$
-  - 别用：`pow(a, b)`
-  - 要用：快速幂 https://io.zouht.com/18.html
-- $\lfloor\log_2 a\rfloor$
-  - 别用：`log2(a)`
-  - 要用：`__lg` （不规范，但是这是竞赛）/ `bit_width`（C++20 可用）
+> 参考：https://codeforces.com/blog/entry/107717
+
+### 推荐的整数运算写法
+
+#### 1. 向下取整除法 $\lfloor\frac{a}{b}\rfloor$
+- ❌ 别用：`floor(1.0 * a / b)`
+- ✅ 要用：`a / b`
+- 示例：
+```cpp
+int a = 7, b = 3;
+int result = a / b;  // 结果为 2
+```
+
+#### 2. 向上取整除法 $\lceil\frac{a}{b}\rceil$
+- ❌ 别用：`ceil(1.0 * a / b)`
+- ✅ 要用：`(a + b - 1) / b`（基于公式：$\lceil\frac{a}{b}\rceil=\lfloor\frac{a+b-1}{b}\rfloor$）
+- 示例：
+```cpp
+int a = 7, b = 3;
+int result = (a + b - 1) / b;  // 结果为 3
+```
+
+#### 3. 平方根向下取整 $\lfloor\sqrt a\rfloor$
+- ❌ 别用：`(int) sqrt(a)`
+- ✅ 要用：[二分查找](https://oiwiki.com/basic/binary/)
+- 示例：
+```cpp
+// 二分查找计算 floor(sqrt(n))
+int isqrt(int n) {
+    int l = 0, r = n;
+    while (l < r) {
+        int mid = l + (r - l + 1) / 2;
+        if (mid <= n / mid) l = mid;  // 避免 mid * mid 溢出
+        else r = mid - 1;
+    }
+    return l;
+}
+```
+
+#### 4. 整数幂运算 $a^b$
+- ❌ 别用：`pow(a, b)`
+- ✅ 要用：[快速幂](https://oiwiki.com/math/binary-exponentiation/)
+- 示例：
+```cpp
+// 快速幂计算 a^b
+long long qpow(long long a, long long b) {
+    long long res = 1;
+    while (b) {
+        if (b & 1) res *= a;
+        a *= a;
+        b >>= 1;
+    }
+    return res;
+}
+```
+
+#### 5. 以2为底的对数向下取整 $\lfloor\log_2 a\rfloor$
+- ❌ 别用：`log2(a)`
+- ✅ 要用：`__lg(a)` 或 `bit_width(a) - 1`（C++20）
+- 示例：
+```cpp
+int a = 15;
+int result = __lg(a);  // 结果为 3，因为 log2(15) ≈ 3.9
+// C++20: int result = std::bit_width((unsigned)a) - 1;
+```
 
 ## 4.9 `gcd()` / `lcm()`
 
@@ -1085,6 +1142,608 @@ int lcm(int a, int b)
 {
     return a / gcd(a, b) * b;
 }
+```
+---
+
+
+
+# 5 其他常用容器
+
+本章节补充了一些在算法竞赛中也较为常用的容器，虽然使用频率不如前面章节的容器，但在特定场景下非常有用。
+
+## 5.1 数组 [array](https://zh.cppreference.com/w/cpp/container/array)
+
+**`#include <array>`**
+
+固定长度的顺序容器，在编译期就确定大小，性能接近原生数组，但提供了 STL 容器的接口。
+
+### 5.1.1 常用方法
+
+#### 构造
+
+**`array<类型, 长度> arr`**
+
+注意：长度必须是编译期常量。
+
+时间复杂度：$O(1)$
+
+```cpp
+array<int, 5> arr1;              // 构造长度为5的int数组，未初始化
+array<int, 5> arr2 = {1, 2, 3};  // 构造并初始化前3个元素，后2个为0
+array<int, 5> arr3{};            // 构造并全部初始化为0
+```
+
+#### 访问元素
+
+**中括号运算符 `[]`** 和 **`.at()`**
+
+时间复杂度：$O(1)$
+
+```cpp
+array<int, 5> arr = {1, 2, 3, 4, 5};
+cout << arr[0] << endl;     // 1, 不检查越界
+cout << arr.at(0) << endl;  // 1, 检查越界，越界会抛出异常
+```
+
+#### 获取首尾元素
+
+- **`.front()`**：返回第一个元素
+- **`.back()`**：返回最后一个元素
+
+时间复杂度：$O(1)$
+
+#### 获取长度
+
+**`.size()`**
+
+时间复杂度：$O(1)$
+
+#### 填充
+
+**`.fill(值)`**
+
+将所有元素设置为指定值
+
+时间复杂度：$O(n)$
+
+```cpp
+array<int, 5> arr;
+arr.fill(0);  // 所有元素设为0
+```
+
+### 5.1.2 适用情形
+
+- 长度在编译期已知且固定的场景
+- 需要 STL 接口但又追求性能的场景
+- 相比普通数组，array 可以作为函数返回值、支持赋值操作
+
+### 5.1.3 注意事项
+
+#### 长度必须是常量
+
+```cpp
+int n = 10;
+array<int, n> arr;       // 错误！n不是编译期常量
+array<int, 10> arr;      // 正确
+const int N = 10;
+array<int, N> arr;       // 正确
+```
+
+#### 不能动态改变大小
+
+array 的大小在编译期确定，无法像 vector 那样动态增长。
+
+## 5.2 双端队列 [deque](https://zh.cppreference.com/w/cpp/container/deque)
+
+**`#include <deque>`**
+
+双端队列（double-ended queue），支持在头尾两端高效插入和删除的顺序容器。
+
+### 5.2.1 常用方法
+
+#### 构造
+
+**`deque<类型> dq`**
+
+```cpp
+deque<int> dq;          // 构造空双端队列
+deque<int> dq(10);      // 构造长度为10的双端队列
+deque<int> dq(10, 1);   // 构造长度为10，初值为1的双端队列
+```
+
+#### 头尾操作
+
+- **`.push_front(元素)`**：在头部插入元素
+- **`.push_back(元素)`**：在尾部插入元素
+- **`.pop_front()`**：删除头部元素
+- **`.pop_back()`**：删除尾部元素
+- **`.front()`**：访问头部元素
+- **`.back()`**：访问尾部元素
+
+时间复杂度：均为 $O(1)$
+
+```cpp
+deque<int> dq;
+dq.push_back(1);   // dq = [1]
+dq.push_front(2);  // dq = [2, 1]
+dq.push_back(3);   // dq = [2, 1, 3]
+int x = dq.front(); // x = 2
+dq.pop_front();    // dq = [1, 3]
+```
+
+#### 随机访问
+
+**中括号运算符 `[]`**
+
+时间复杂度：$O(1)$
+
+#### 其他
+
+- **`.size()`**：获取长度
+- **`.empty()`**：判空
+- **`.clear()`**：清空
+
+### 5.2.2 适用情形
+
+- 需要在两端进行插入删除操作的场景
+- 单调队列的实现
+- 滑动窗口问题
+
+### 5.2.3 注意事项
+
+#### 性能不如 vector
+
+deque 虽然支持随机访问，但性能不如 vector，因为其内存不是完全连续的。如果只需要尾部操作，优先使用 vector。
+
+## 5.3 链表 [list](https://zh.cppreference.com/w/cpp/container/list)
+
+**`#include <list>`**
+
+双向链表，支持在任意位置快速插入和删除，但不支持随机访问。
+
+### 5.3.1 常用方法
+
+#### 构造
+
+**`list<类型> lst`**
+
+```cpp
+list<int> lst;          // 构造空链表
+list<int> lst(10);      // 构造10个元素的链表
+list<int> lst(10, 1);   // 构造10个元素，初值为1
+```
+
+#### 头尾操作
+
+- **`.push_front(元素)`**：在头部插入
+- **`.push_back(元素)`**：在尾部插入
+- **`.pop_front()`**：删除头部元素
+- **`.pop_back()`**：删除尾部元素
+- **`.front()`**：访问头部元素
+- **`.back()`**：访问尾部元素
+
+时间复杂度：均为 $O(1)$
+
+#### 插入和删除
+
+- **`.insert(迭代器, 元素)`**：在指定位置前插入
+- **`.erase(迭代器)`**：删除指定位置元素
+
+时间复杂度：$O(1)$（需要先通过遍历找到位置）
+
+#### 其他操作
+
+- **`.sort()`**：对链表排序
+- **`.reverse()`**：反转链表
+- **`.unique()`**：去除相邻重复元素
+- **`.merge(另一个list)`**：合并两个有序链表
+
+### 5.3.2 适用情形
+
+- 频繁在中间位置插入删除的场景
+- 不需要随机访问的场景
+- 实际竞赛中很少使用，一般用 vector 或 deque 代替
+
+### 5.3.3 注意事项
+
+#### 不支持随机访问
+
+```cpp
+list<int> lst = {1, 2, 3, 4, 5};
+cout << lst[2] << endl;  // 错误！不支持下标访问
+```
+
+#### 性能开销
+
+链表的节点不连续，缓存性能差，在竞赛中一般不推荐使用。
+
+## 5.4 多重集合 [multiset](https://zh.cppreference.com/w/cpp/container/multiset)
+
+**`#include <set>`**
+
+与 set 类似，但允许元素重复出现。底层原理是红黑树。
+
+### 5.4.1 常用方法
+
+#### 构造
+
+**`multiset<类型, 比较器> mst`**
+
+```cpp
+multiset<int> mst;               // 从小到大
+multiset<int, greater<int>> mst; // 从大到小
+```
+
+#### 插入和删除
+
+- **`.insert(元素)`**：插入元素（允许重复）
+- **`.erase(元素)`**：删除**所有**等于该元素的值
+- **`.erase(迭代器)`**：删除迭代器指向的单个元素
+
+时间复杂度：$O(\log n)$
+
+```cpp
+multiset<int> mst;
+mst.insert(1);  // [1]
+mst.insert(1);  // [1, 1]
+mst.insert(2);  // [1, 1, 2]
+mst.erase(1);   // [2]，删除了所有的1
+
+// 如果只想删除一个1：
+multiset<int> mst = {1, 1, 2};
+mst.erase(mst.find(1));  // [1, 2]，只删除一个1
+```
+
+#### 查找和计数
+
+- **`.find(元素)`**：返回任意一个等于该元素的迭代器
+- **`.count(元素)`**：返回元素出现的次数
+
+时间复杂度：$O(\log n)$（count 为 $O(\log n + k)$，$k$ 为元素个数）
+
+#### 其他
+
+- **`.size()`**、**`.empty()`**、**`.clear()`**
+
+### 5.4.2 适用情形
+
+- 需要维护有序序列且允许重复的场景
+- 动态维护中位数
+- 对顶堆的实现
+
+### 5.4.3 注意事项
+
+#### 删除时注意是删除所有还是单个
+
+```cpp
+multiset<int> mst = {1, 1, 1, 2};
+mst.erase(1);              // 删除所有1，结果：[2]
+mst.erase(mst.find(1));    // 只删除一个1，结果：[1, 1, 2]
+```
+
+## 5.5 多重映射 [multimap](https://zh.cppreference.com/w/cpp/container/multimap)
+
+**`#include <map>`**
+
+与 map 类似，但允许键重复出现。底层原理是红黑树。
+
+### 5.5.1 常用方法
+
+#### 构造
+
+**`multimap<键类型, 值类型, 比较器> mmp`**
+
+```cpp
+multimap<int, int> mmp;               // 键从小到大
+multimap<int, int, greater<int>> mmp; // 键从大到小
+```
+
+#### 插入
+
+- **`.insert({键, 值})`** 或 **`.insert(make_pair(键, 值))`**
+
+时间复杂度：$O(\log n)$
+
+```cpp
+multimap<int, int> mmp;
+mmp.insert({1, 100});
+mmp.insert({1, 200});  // 允许键重复
+mmp.insert({2, 300});
+```
+
+#### 查找
+
+- **`.find(键)`**：返回任意一个该键的迭代器
+- **`.count(键)`**：返回该键出现的次数
+- **`.equal_range(键)`**：返回包含所有该键元素的迭代器范围
+
+时间复杂度：$O(\log n)$
+
+```cpp
+multimap<int, int> mmp = {{1, 100}, {1, 200}, {2, 300}};
+cout << mmp.count(1) << endl;  // 2
+
+auto range = mmp.equal_range(1);
+for (auto it = range.first; it != range.second; ++it)
+    cout << it->second << endl;  // 输出 100 200
+```
+
+#### 删除
+
+- **`.erase(键)`**：删除所有该键的元素
+- **`.erase(迭代器)`**：删除单个元素
+
+时间复杂度：$O(\log n)$
+
+### 5.5.2 适用情形
+
+- 需要一对多映射的场景
+- 实际竞赛中较少使用，一般用 `map<键, vector<值>>` 代替
+
+### 5.5.3 注意事项
+
+#### 不能使用中括号访问
+
+```cpp
+multimap<int, int> mmp;
+mmp[1] = 100;  // 错误！multimap不支持[]运算符
+```
+
+## 5.6 无序集合 [unordered_set](https://zh.cppreference.com/w/cpp/container/unordered_set)
+
+**`#include <unordered_set>`**
+
+基于哈希表实现的集合，元素无序但查找速度快。
+
+### 5.6.1 常用方法
+
+#### 构造
+
+**`unordered_set<类型> ust`**
+
+```cpp
+unordered_set<int> ust;
+```
+
+#### 插入和删除
+
+- **`.insert(元素)`**：插入元素
+- **`.erase(元素)`**：删除元素
+
+平均时间复杂度：$O(1)$，最坏 $O(n)$
+
+#### 查找
+
+- **`.find(元素)`**：返回元素迭代器
+- **`.count(元素)`**：判断元素是否存在（返回0或1）
+
+平均时间复杂度：$O(1)$，最坏 $O(n)$
+
+```cpp
+unordered_set<int> ust = {1, 3, 5, 7};
+if (ust.count(3))  // 判断3是否存在
+    cout << "exists" << endl;
+```
+
+#### 其他
+
+- **`.size()`**、**`.empty()`**、**`.clear()`**
+
+### 5.6.2 适用情形
+
+- 只需要判断元素是否存在，不需要有序性
+- 对查找性能要求高的场景
+- 元素去重但不需要排序
+
+### 5.6.3 注意事项
+
+#### 元素无序
+
+unordered_set 的元素是无序的，遍历时的顺序不确定。
+
+#### 最坏情况性能退化
+
+当哈希冲突严重时，时间复杂度会退化到 $O(n)$。竞赛中如果被卡哈希，可以使用 set 代替。
+
+#### 不支持自定义类型
+
+对于自定义类型，需要提供哈希函数，比较麻烦。
+
+## 5.7 无序映射 [unordered_map](https://zh.cppreference.com/w/cpp/container/unordered_map)
+
+**`#include <unordered_map>`**
+
+基于哈希表实现的键值对容器，键无序但查找速度快。
+
+### 5.7.1 常用方法
+
+#### 构造
+
+**`unordered_map<键类型, 值类型> ump`**
+
+```cpp
+unordered_map<int, int> ump;
+unordered_map<string, int> ump;  // 常用于字符串映射
+```
+
+#### 增删改查
+
+- **中括号 `[]`**：访问或插入
+- **`.insert({键, 值})`**：插入
+- **`.erase(键)`**：删除
+- **`.find(键)`**：查找
+- **`.count(键)`**：判断键是否存在
+
+平均时间复杂度：$O(1)$，最坏 $O(n)$
+
+```cpp
+unordered_map<string, int> ump;
+ump["apple"] = 5;
+ump["banana"] = 3;
+
+if (ump.count("apple"))
+    cout << ump["apple"] << endl;  // 5
+```
+
+#### 其他
+
+- **`.size()`**、**`.empty()`**、**`.clear()`**
+
+### 5.7.2 适用情形
+
+- 只需要键值映射，不需要键的有序性
+- 对查找性能要求高的场景
+- 字符串哈希、计数等场景
+
+### 5.7.3 注意事项
+
+#### 键无序
+
+遍历时键的顺序不确定。
+
+#### 可能被卡哈希
+
+竞赛中如果被卡哈希，使用 map 代替或自定义哈希函数。
+
+#### 中括号的副作用
+
+与 map 相同，使用 `[]` 访问不存在的键会创建该键。
+
+## 5.8 无序多重集合 [unordered_multiset](https://zh.cppreference.com/w/cpp/container/unordered_multiset)
+
+**`#include <unordered_set>`**
+
+基于哈希表的 multiset，允许元素重复且无序。
+
+### 5.8.1 常用方法
+
+与 multiset 类似，但元素无序，操作的平均时间复杂度为 $O(1)$。
+
+```cpp
+unordered_multiset<int> umst;
+umst.insert(1);
+umst.insert(1);
+umst.insert(2);
+cout << umst.count(1) << endl;  // 2
+```
+
+### 5.8.2 适用情形
+
+需要允许重复元素，且不需要有序性，追求查找性能。
+
+### 5.8.3 注意事项
+
+实际竞赛中很少使用，一般用 unordered_map 配合计数实现。
+
+## 5.9 无序多重映射 [unordered_multimap](https://zh.cppreference.com/w/cpp/container/unordered_multimap)
+
+**`#include <unordered_map>`**
+
+基于哈希表的 multimap，允许键重复且无序。
+
+### 5.9.1 常用方法
+
+与 multimap 类似，但键无序，操作的平均时间复杂度为 $O(1)$。
+
+```cpp
+unordered_multimap<int, int> ummp;
+ummp.insert({1, 100});
+ummp.insert({1, 200});
+cout << ummp.count(1) << endl;  // 2
+```
+
+### 5.9.2 适用情形
+
+需要一对多映射，且不需要键的有序性。
+
+### 5.9.3 注意事项
+
+实际竞赛中很少使用，一般用 `unordered_map<键, vector<值>>` 代替。
+
+## 5.10 元组 [tuple](https://zh.cppreference.com/w/cpp/utility/tuple)
+
+**`#include <tuple>`**
+
+可以存储任意数量、任意类型元素的容器，是 pair 的扩展版本。
+
+### 5.10.1 常用方法
+
+#### 构造
+
+**`tuple<类型1, 类型2, ...> tup`**
+
+```cpp
+tuple<int, double, string> t1;
+tuple<int, int, int> t2;
+```
+
+#### 赋值
+
+老式写法：
+
+```cpp
+tuple<int, double, string> t = make_tuple(1, 3.14, "hello");
+```
+
+列表构造（C++11）：
+
+```cpp
+tuple<int, double, string> t = {1, 3.14, "hello"};
+```
+
+#### 取值
+
+使用 `get<索引>(tuple)` 获取元素（索引从0开始）：
+
+```cpp
+tuple<int, double, string> t = {1, 3.14, "hello"};
+int a = get<0>(t);        // 1
+double b = get<1>(t);     // 3.14
+string c = get<2>(t);     // "hello"
+```
+
+结构化绑定（C++17）：
+
+```cpp
+tuple<int, double, string> t = {1, 3.14, "hello"};
+auto [a, b, c] = t;
+cout << a << ' ' << b << ' ' << c << endl;  // 1 3.14 hello
+```
+
+#### 获取元组大小
+
+```cpp
+tuple<int, double, string> t;
+constexpr size_t size = tuple_size<decltype(t)>::value;  // 3
+```
+
+### 5.10.2 适用情形
+
+- 需要返回多个值的函数
+- 存储三元组、四元组等多元数据
+- 在 map 中使用复合键：`map<tuple<int, int, int>, int>`
+
+### 5.10.3 注意事项
+
+#### 访问语法较繁琐
+
+相比 pair 的 `.first` 和 `.second`，tuple 的 `get<0>()` 语法较为冗长，建议配合 C++17 的结构化绑定使用。
+
+#### 可读性问题
+
+对于元素较多的 tuple，建议定义结构体以提高代码可读性：
+
+```cpp
+// 不推荐
+tuple<int, int, string, double> student;
+
+// 推荐
+struct Student {
+    int id;
+    int age;
+    string name;
+    double score;
+};
 ```
 
 
