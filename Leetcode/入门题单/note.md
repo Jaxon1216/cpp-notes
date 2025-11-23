@@ -496,3 +496,102 @@ public:
     }
 };
 ```
+
+
+## [统计元音字符串](https://leetcode.cn/problems/count-the-number-of-vowel-strings-in-range/description/?envType=study-plan-v2&envId=primers-list)
+> 题意：给定一个下标从 0 开始的字符串数组 words 和两个整数 left、right。
+
+> 如果一个字符串以元音字母开头且以元音字母结尾（元音为 'a', 'e', 'i', 'o', 'u'），则称其为元音字符串。
+
+> 返回在闭区间 [left, right] 内，words[i] 为元音字符串的数量。
+
+- 我的屎山
+```cpp
+class Solution {
+public:
+    bool isyuan(string &s){
+        int a = s.size() - 1;
+        if((s[0] == 'a'||s[0] == 'e'||s[0] == 'i'||s[0] == 'o'||s[0] == 'u')&&(s[a] == 'a'||s[a] == 'e'||s[a] == 'i'||s[a] == 'o'||s[a] == 'u'))
+         return true;
+        return false;
+    }
+    int vowelStrings(vector<string>& words, int left, int right) {
+        //思路：计数器，判断函数，
+        int cnt = 0;
+        for(int i = left; i <= right; i++){
+            if(isyuan(words[i])) cnt++;
+        }
+        return cnt;
+    }
+};
+```
+- 灵神优雅版：
+```cpp
+//思路：
+class Solution {
+public:
+    int vowelStrings(vector<string>& words, int left, int right) {
+        const string vowel = "aeiou";
+        int ans = 0;
+        for (int i = left; i <= right; i++) {
+            string& s = words[i];
+            ans += vowel.find(s[0]) != string::npos &&
+                   vowel.find(s.back()) != string::npos;
+                   //充分利用string的迭代器
+        }
+        return ans;
+    }
+};
+```
+## [二分](https://leetcode.cn/problems/peak-index-in-a-mountain-array/?envType=study-plan-v2&envId=primers-list)
+```cpp
+class Solution {
+public:
+    int peakIndexInMountainArray(vector<int>& arr) {
+        int l = 0, r = arr.size() - 1;
+        while (l < r) {
+            int mid = l + (r - l) / 2;
+            if (arr[mid] < arr[mid + 1]) {  // 上升阶段
+                l = mid + 1;
+            } else {                        // 下降阶段
+                r = mid;
+            }
+        }
+        return l; // 或 r，二者相等
+    }
+};
+- `int mid = l + (r - l) / 2` 为什么这样写？
+可能见过更直观的写法：
+```cpp
+int mid = (l + r) / 2;
+```
+
+但是，这样写存在整数溢出风险。
+
+---
+
+**(l + r) / 2 可能溢出吗？**
+
+是的！
+
+假如：
+- l = 2_000_000_000
+- r = 2_000_000_005
+
+那么：
+- l + r = 4_000_000_005
+
+而 `int` 最大值大约是 2147483647（约 2e9），所以 l + r 会溢出，导致 mid 计算错误。
+
+---
+
+**推导过程（直观理解）：**
+
+我们想求位于 l 和 r 中间的中点 mid：
+
+- 距离：`(r - l)`
+- 中点：`mid = l + (r - l) / 2`
+
+这样计算，与 `(l + r) / 2` 完全等价，但***可以避免溢出***。
+
+---
