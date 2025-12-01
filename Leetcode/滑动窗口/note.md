@@ -1,5 +1,5 @@
-# 滑动窗口
-## 定长模版：我们要计算所有长度恰好为 k 的子串中，最多可以包含多少个元音字母。
+# 定长滑动窗口
+1. [x] **定长模版：我们要计算所有长度恰好为 k 的子串中，最多可以包含多少个元音字母。**
 ```cpp
 class Solution {
 public:
@@ -27,7 +27,7 @@ public:
 };
 ```
 
-## [最大平均数](https://leetcode.cn/problems/maximum-average-subarray-i/description/)
+2. [x] **[最大平均数](https://leetcode.cn/problems/maximum-average-subarray-i/description/)**
 
 
 myans:
@@ -73,7 +73,7 @@ double:     1e18（或 +inf）
 ```
 对于inf，在leetcode无法添加库，所以用`double ans = -std::numeric_limits<double>::infinity();`
 
-## [半径为k的子数组平均值](https://leetcode.cn/problems/k-radius-subarray-averages/)
+3. [x] **[半径为k的子数组平均值](https://leetcode.cn/problems/k-radius-subarray-averages/)**
 - vector初始化为-1技巧
 ### 看懂报错
 ```text
@@ -98,7 +98,7 @@ tmp = sum(nums[l ... r])
 - int 的上限是：
 `2.147 × 10^9`
 
-## [几乎唯一子数组最大和](https://leetcode.cn/problems/maximum-sum-of-almost-unique-subarray/description/)
+4. [x] **[几乎唯一子数组最大和](https://leetcode.cn/problems/maximum-sum-of-almost-unique-subarray/description/)**
 >给定整数数组 `nums` 及正整数 `m`、`k`（`1 <= m <= k <= nums.length`），求长度为 `k` 且至少含 `m` 个不同元素的子数组的最大和，无此类子数组则返回 `0`。
 - 此题又涉及到哈希表！
 ```cpp
@@ -132,3 +132,110 @@ if(cnt[nums[l]]==0) cnt.erase(nums[l]);
 ```
 不过又出现了越界，int 改成 long long;
 
+
+5. [x] **[长度为k的子数组最大和](https://leetcode.cn/problems/maximum-sum-of-distinct-subarrays-with-length-k/description/)**
+最大子数组元素和，要求子数组元素互异；
+- 一是`unordered_map.count(val)`辨析
+- `.size()` can count the number of elements because of the `uniqueness of map`
+
+```cpp
+class Solution {
+public:
+    long long maximumSubarraySum(vector<int>& nums, int k) {
+        //思路：注意数据类型，滑动窗口，进i，更新答案，出l，注意边界
+        //子数组中的所有元素 各不相同 。还是不熟悉map，搞一个无序map，利用互异性(元素各不相同），size函数，count函数erase函数
+        long long ans = 0,  tmp = 0;
+        unordered_map<int, int> cnt;
+
+        for(int i = 0; i < nums.size(); i++){
+            tmp += nums[i];
+            cnt[nums[i]]++;
+            int l = i - k + 1;
+            if(l < 0) continue;
+            if(cnt.size() == k)
+                ans = max(ans,tmp); //ans > tmp ? ans : tmp;
+            tmp -= nums[l];
+            cnt[nums[l]]--;
+            if(cnt[nums[l]] == 0)
+                cnt.erase(nums[l]);
+        }
+        return ans;
+    }
+};
+```
+
+6. [x] **[可获得最大点数](https://leetcode.cn/problems/maximum-points-you-can-obtain-from-cards/description/)**
+可以从左开始拿，从右边开始拿，拿到定长为k的数目的卡片，返回卡片点数可能的最大之和；痛点在于左右两边
+
+- C++17引入的 `reduce`函数 快速计算窗口和
+- 最多，想到对立面最少，转化为定长滑动窗口
+- 需要意识到，左右两边都可以随机拿一张，可以想到所有的可能有哪些 
+左边0个 右边k个
+左边1个 右边k-1个
+
+反面计算
+```cpp
+class Solution {
+public:
+    int maxScore(vector<int>& cardPoints, int k) {
+        //两边最大，中间最小，从0滑到n - k，最后答案要用总和减一下，另外考虑特殊情况
+        //当全部都是一样的元素的时候，同上
+        int ans = 1e9, tmp = 0, j = cardPoints.size() - k;
+        if(j == 0) return reduce(cardPoints.begin(),cardPoints.end());
+        for(int i = 0; i < cardPoints.size();i++){
+            tmp += cardPoints[i];
+
+            int l = i - j + 1;
+            if(l < 0) continue;
+            ans = min(ans,tmp);
+
+            tmp -= cardPoints[l];
+
+        }
+        return reduce(cardPoints.begin(),cardPoints.end()) - ans;
+    }
+};
+```
+正面计算
+```cpp
+class Solution {
+public:
+    int maxScore(vector<int>& cardPoints, int k) {
+        int s = reduce(cardPoints.begin(), cardPoints.begin() + k);
+        int ans = s;
+        for (int i = 1; i <= k; i++) {
+            s += cardPoints[cardPoints.size() - i] - cardPoints[k - i];
+            ans = max(ans, s);
+        }
+        return ans;
+    }
+};
+```
+
+# 不定长滑动窗口
+
+1. [ ] **[无重复字符的最长子串](https://leetcode.cn/problems/longest-substring-without-repeating-characters/description/)**
+- 需要熟练运用map，
+- 要注意这些：
+    - 一是连续性，abca，滑动到第二个a，删除最左边的就行
+    - 二是注意这个while可以让指针连续移动，直到重复字符那里
+    - 三是复杂度O（n），虽然嵌套了 while，但每个字符最多被 left 和 right 各访问一次
+```cpp
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        int n = s.length(), ans = 0, left = 0;
+        unordered_map<char, int> cnt; // 维护从下标 left 到下标 right 的字符
+        for (int right = 0; right < n; right++) {
+            char c = s[right];
+            cnt[c]++;
+            while (cnt[c] > 1) { // 窗口内有重复字母
+                cnt[s[left]]--; // 移除窗口左端点字母
+                left++; // 缩小窗口
+            }
+            ans = max(ans, right - left + 1); // 更新窗口长度最大值
+        }
+        return ans;
+    }
+};
+//
