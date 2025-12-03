@@ -36,11 +36,11 @@ gets(s);//c11之后就被删了
   - 输入："i want to get an accepted" → 输出："I Want To Get An Accepted"
 
 > 思路：cin.getline输入，判断字母前面是空格，是就变大写，变大写-'a'+'A'；
-- strlen在<cstirng>库
+- strlen在`<cstring>`库
 - 检查 `'\0'`（空字符）而不是空格,空格是` `;
 - 或者`s[i] = toupper(s[i])`,这个在`<cctype>`
 
-## [x] [找最大元素](https://acm.hdu.edu.cn/showproblem.php?pid=2025)
+### [找最大元素](https://acm.hdu.edu.cn/showproblem.php?pid=2025) <Badge type="tip" text="已解决" />
 >思路：直接模拟就行
 
 ## [判断棋盘颜色](https://leetcode.cn/problems/determine-color-of-a-chessboard-square/description/)
@@ -82,7 +82,7 @@ for(int i = 0; i < s.size()-2; i++)
 ```
 题目说`1 <= s.length <= 100`，在看有个`s.size()-2`,当字符串小于3时，会变成一个很大的无符号数（因为 `size()`返回的是 `size_t`类型，是无符号整数
 
-## [x] [字符串操作](https://leetcode.cn/problems/final-value-of-variable-after-performing-operations/description/)
+### [字符串操作](https://leetcode.cn/problems/final-value-of-variable-after-performing-operations/description/) <Badge type="tip" text="已解决" />
 >直接模拟即可
 - 两个不同操作得出一样的结果用`||`;
 
@@ -115,10 +115,10 @@ string defangIPaddr(string address) {
     }
 ```
 
-## [x] [一对](https://leetcode.cn/problems/count-asterisks/description/)
+### [一对](https://leetcode.cn/problems/count-asterisks/description/) <Badge type="tip" text="已解决" />
 >两个竖线为一对，之前书上有类似的，创建一个标志变量加上！
 
-## [x] [判断两符号数量相等，先A后B，相等为一组](https://leetcode.cn/problems/split-a-string-in-balanced-strings/description/)
+### [判断两符号数量相等，先A后B，相等为一组](https://leetcode.cn/problems/split-a-string-in-balanced-strings/description/) <Badge type="tip" text="已解决" />
 >思路: 最开始想用两数统计次数，相等就输出然后再重置，又想到二元关系，用加一减一估计更好。
 
 ## [动态口令](https://leetcode.cn/problems/zuo-xuan-zhuan-zi-fu-chuan-lcof/description/)
@@ -138,10 +138,10 @@ for(int i = 0; i < len; i++)
     result += password[(i+target)%len];
 ```
 
-## [x] [统计vector中的string句子中的单词个数](https://leetcode.cn/problems/maximum-number-of-words-found-in-sentences/)
+### [统计vector中的string句子中的单词个数](https://leetcode.cn/problems/maximum-number-of-words-found-in-sentences/) <Badge type="tip" text="已解决" />
 >思路：最开始cnt为0，遍历，跟每个句子的temp比较,聪明的我发现单词数就是空格加1；
 
-## ⚠️ [字符串的比较](https://leetcode.cn/problems/count-the-number-of-consistent-strings/description/)
+### [字符串的比较](https://leetcode.cn/problems/count-the-number-of-consistent-strings/description/) <Badge type="warning" text="未解决" />
 ### 题意
 - **题目描述**：给你一个由不同字符组成的字符串 `allowed` 和一个字符串数组 `words`。如果一个字符串的每一个字符都在 `allowed` 中，就称这个字符串是**一致字符串**。请你返回 `words` 数组中**一致字符串**的数目
 - **输入**：`allowed` 是由不同字符组成的字符串（1 <= allowed.length <= 26），`words` 是字符串数组（1 <= words.length <= 10^4，1 <= words[i].length <= 10），只包含小写英文字母

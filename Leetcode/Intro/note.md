@@ -17,7 +17,7 @@ vec.push_back(3.14);  // 正确
 vector<double> vec = {3.14, 2.71};  // 正确
 ```
 
-## [输出2和n的最小公倍数](https://leetcode.cn/problems/smallest-even-multiple/solutions/1831561/yi-xing-gong-shi-by-endlesscheng-ixss/?envType=study-plan-v2&envId=primers-list)
+## [输出2和n的最小公倍数](https://leetcode.cn/problems/smallest-even-multiple/solutions/1831561/yi-xing-gong-shi-by-endlesscheng-ixss/?envType=study-plan-v2&envId=primers-list) <Badge type="tip" text="已解决" />
 >我就直接用循环模拟了
 
 - 我居然没想到，n为奇答案就是2*n，n为偶答案就是n；但是这个优雅的写法我还是写不出来哈
@@ -69,7 +69,7 @@ int multiplyBy8 = num << 3;    // 左移3位相当于乘以8
 int divideBy4 = num >> 2;      // 右移2位相当于除以4
 ```
 
-## [统计好数对](https://leetcode.cn/problems/number-of-good-pairs/description/?envType=study-plan-v2&envId=primers-list)
+## [统计好数对](https://leetcode.cn/problems/number-of-good-pairs/description/?envType=study-plan-v2&envId=primers-list) <Badge type="tip" text="已解决" />
 题意
 统计满足 `i<j` 且 `nums[i]=nums[j]` 的数对个数
 
@@ -97,7 +97,7 @@ public:
 值会被初始化为 0（对于 int 类型）
 
 
-## [统计好三元数组](https://leetcode.cn/problems/count-good-triplets/description/?envType=study-plan-v2&envId=primers-list)
+## [统计好三元数组](https://leetcode.cn/problems/count-good-triplets/description/?envType=study-plan-v2&envId=primers-list) <Badge type="tip" text="已解决" />
 题意：找出有多少种以下情况：i < j < k,并且对应的值。。。。满足相关条件。
 
 - 我还是只会暴力O(n^3)复杂度，学一下[前缀和](https://oiwiki.com/basic/prefix-sum/)
@@ -159,7 +159,7 @@ public:
 然后才把 arr[j] 加入计数
 这样保证处理 (j, k) 时，统计的是 j 之前的元素
 
-## [各位数字和](https://leetcode.cn/problems/add-digits/description/?envType=study-plan-v2&envId=primers-list)
+## [各位数字和](https://leetcode.cn/problems/add-digits/description/?envType=study-plan-v2&envId=primers-list) <Badge type="tip" text="已解决" />
 >题意: 给定一个非负整数 num，反复将各个位上的数字相加，直到结果为一位数。返回这个结果。
 - 还是只会用循环，来看看O（1）做法：
 比如 num = 678，计算过程为：
@@ -203,7 +203,7 @@ public:
 (num - 1) % 9 + 1
 ```
 
-## [2的幂](https://leetcode.cn/problems/power-of-two/description/?envType=study-plan-v2&envId=primers-list)
+## [2的幂](https://leetcode.cn/problems/power-of-two/description/?envType=study-plan-v2&envId=primers-list) <Badge type="tip" text="已解决" />
 题意：
 给你一个整数 n，请你判断该整数是否是 2 的幂次方。如果是，返回 true ；否则，返回 false 。
 如果存在一个整数 x 使得 n == 2x ，则认为 n 是 2 的幂次方
@@ -253,7 +253,7 @@ public:
 };
 ```
 
-## [3的幂](https://leetcode.cn/problems/power-of-three/description/?envType=study-plan-v2&envId=primers-list)
+## [3的幂](https://leetcode.cn/problems/power-of-three/description/?envType=study-plan-v2&envId=primers-list) <Badge type="tip" text="已解决" />
 > 找3的几次方等于n
 - 我的想法
     - 已知 $2^{31} \approx 2.1 \times 10^9$，$\log_{10}2 \approx 0.3$，$\log_{10}3 \approx 0.4771$，$\log_{10}7 \approx 0.8451$
@@ -317,7 +317,7 @@ public:
 };
 ```
 
-## [丑数](https://leetcode.cn/problems/ugly-number/description/?envType=study-plan-v2&envId=primers-list)
+## [丑数](https://leetcode.cn/problems/ugly-number/description/?envType=study-plan-v2&envId=primers-list) <Badge type="tip" text="已解决" />
 
 丑数 就是只包含质因数 2、3 和 5 的 正 整数。
 
@@ -366,7 +366,7 @@ public:
 };
 ```
 
-## [转置矩阵](https://leetcode.cn/problems/transpose-matrix/?envType=study-plan-v2&envId=primers-list)
+## [转置矩阵](https://leetcode.cn/problems/transpose-matrix/?envType=study-plan-v2&envId=primers-list) <Badge type="tip" text="已解决" />
 
 > 太生疏了，错误好多；
 
@@ -431,7 +431,7 @@ public:
 };
 ```
 
-## [分割字符串](https://leetcode.cn/problems/maximum-score-after-splitting-a-string/?envType=study-plan-v2&envId=primers-list)
+## [分割字符串](https://leetcode.cn/problems/maximum-score-after-splitting-a-string/?envType=study-plan-v2&envId=primers-list) <Badge type="tip" text="已解决" />
 - 前缀和
 - s.size() 位置是尾元素后面一位
 我的O（n^2
@@ -498,7 +498,7 @@ public:
 ```
 
 
-## [统计元音字符串](https://leetcode.cn/problems/count-the-number-of-vowel-strings-in-range/description/?envType=study-plan-v2&envId=primers-list)
+## [统计元音字符串](https://leetcode.cn/problems/count-the-number-of-vowel-strings-in-range/description/?envType=study-plan-v2&envId=primers-list) <Badge type="tip" text="已解决" />
 > 题意：给定一个下标从 0 开始的字符串数组 words 和两个整数 left、right。
 
 > 如果一个字符串以元音字母开头且以元音字母结尾（元音为 'a', 'e', 'i', 'o', 'u'），则称其为元音字符串。
@@ -543,7 +543,7 @@ public:
     }
 };
 ```
-## [二分](https://leetcode.cn/problems/peak-index-in-a-mountain-array/?envType=study-plan-v2&envId=primers-list)
+## [二分](https://leetcode.cn/problems/peak-index-in-a-mountain-array/?envType=study-plan-v2&envId=primers-list) <Badge type="tip" text="已解决" />
 ```cpp
 class Solution {
 public:

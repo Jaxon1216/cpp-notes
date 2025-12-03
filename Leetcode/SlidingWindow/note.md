@@ -1,5 +1,5 @@
-# 定长滑动窗口
-1. [x] **定长模版：我们要计算所有长度恰好为 k 的子串中，最多可以包含多少个元音字母。**
+# 滑动窗口
+## 定长模版：我们要计算所有长度恰好为 k 的子串中，最多可以包含多少个元音字母。
 ```cpp
 class Solution {
 public:
@@ -27,10 +27,9 @@ public:
 };
 ```
 
-2. [x] **[最大平均数](https://leetcode.cn/problems/maximum-average-subarray-i/description/)**
+### [最大平均数](https://leetcode.cn/problems/maximum-average-subarray-i/description/) <Badge type="tip" text="已解决" />
 
 
-myans:
 ```cpp
 class Solution {
 public:
@@ -73,7 +72,7 @@ double:     1e18（或 +inf）
 ```
 对于inf，在leetcode无法添加库，所以用`double ans = -std::numeric_limits<double>::infinity();`
 
-3. [x] **[半径为k的子数组平均值](https://leetcode.cn/problems/k-radius-subarray-averages/)**
+### [半径为k的子数组平均值](https://leetcode.cn/problems/k-radius-subarray-averages/) <Badge type="tip" text="已解决" />
 - vector初始化为-1技巧
 ### 看懂报错
 ```text
@@ -98,7 +97,7 @@ tmp = sum(nums[l ... r])
 - int 的上限是：
 `2.147 × 10^9`
 
-4. [x] **[几乎唯一子数组最大和](https://leetcode.cn/problems/maximum-sum-of-almost-unique-subarray/description/)**
+### [几乎唯一子数组最大和](https://leetcode.cn/problems/maximum-sum-of-almost-unique-subarray/description/) <Badge type="tip" text="已解决" />
 >给定整数数组 `nums` 及正整数 `m`、`k`（`1 <= m <= k <= nums.length`），求长度为 `k` 且至少含 `m` 个不同元素的子数组的最大和，无此类子数组则返回 `0`。
 - 此题又涉及到哈希表！
 ```cpp
@@ -133,7 +132,7 @@ if(cnt[nums[l]]==0) cnt.erase(nums[l]);
 不过又出现了越界，int 改成 long long;
 
 
-5. [x] **[长度为k的子数组最大和](https://leetcode.cn/problems/maximum-sum-of-distinct-subarrays-with-length-k/description/)**
+### [长度为k的子数组最大和](https://leetcode.cn/problems/maximum-sum-of-distinct-subarrays-with-length-k/description/) <Badge type="tip" text="已解决" />
 最大子数组元素和，要求子数组元素互异；
 - 一是`unordered_map.count(val)`辨析
 - `.size()` can count the number of elements because of the `uniqueness of map`
@@ -164,7 +163,7 @@ public:
 };
 ```
 
-6. [x] **[可获得最大点数](https://leetcode.cn/problems/maximum-points-you-can-obtain-from-cards/description/)**
+### [可获得最大点数](https://leetcode.cn/problems/maximum-points-you-can-obtain-from-cards/description/) <Badge type="tip" text="已解决" />
 可以从左开始拿，从右边开始拿，拿到定长为k的数目的卡片，返回卡片点数可能的最大之和；痛点在于左右两边
 
 - C++17引入的 `reduce`函数 快速计算窗口和
@@ -212,9 +211,9 @@ public:
 };
 ```
 
-# 不定长滑动窗口
+## 不定长滑动窗口
 
-1. [ ] **[无重复字符的最长子串](https://leetcode.cn/problems/longest-substring-without-repeating-characters/description/)**
+### [无重复字符的最长子串](https://leetcode.cn/problems/longest-substring-without-repeating-characters/description/) <Badge type="warning" text="未解决" />
 - 需要熟练运用map，重复想到set或map，连续子串想到窗口
 - 要注意这些：
     - 一是连续性，abca，滑动到第二个a，删除最左边的就行
@@ -241,7 +240,7 @@ public:
 };
 ```
 
-2. [x] [删掉一个元素以后全为1的最长子数组](https://leetcode.cn/problems/longest-subarray-of-1s-after-deleting-one-element/)
+### [删掉一个元素以后全为1的最长子数组](https://leetcode.cn/problems/longest-subarray-of-1s-after-deleting-one-element/) <Badge type="tip" text="已解决" />
 给你一个二进制数组 nums ，你需要从中删掉一个元素。
 请你在删掉元素的结果数组中，返回最长的且只包含 1 的非空子数组的长度。
 如果不存在这样的子数组，请返回 0 。
@@ -275,7 +274,7 @@ public:
 };
 ```
 
-3. [x] [使数组平衡的最少移除数目](https://leetcode.cn/problems/minimum-removals-to-balance-array/description/)
+### [使数组平衡的最少移除数目](https://leetcode.cn/problems/minimum-removals-to-balance-array/description/) <Badge type="tip" text="已解决" />
 给你一个整数数组 nums 和一个整数 k。
 如果一个数组的 最大 元素的值 至多 是其 最小 元素的 k 倍，则该数组被称为是 平衡 的。
 你可以从 nums 中移除 任意 数量的元素，但不能使其变为 空 数组。
@@ -306,7 +305,7 @@ public:
 };
 ```
 
-3. [ ] [尽可能使字符串相等](https://leetcode.cn/problems/get-equal-substrings-within-budget/description/)
+### [尽可能使字符串相等](https://leetcode.cn/problems/get-equal-substrings-within-budget/description/) <Badge type="warning" text="未解决" />
 给两个长度相同的字符串，s 和 t。
 
 将 s 中的第 i 个字符变到 t 中的第 i 个字符需要 |s[i] - t[i]| 的开销（开销可能为 0），也就是两个字符的 ASCII 码值的差的绝对值。
@@ -317,7 +316,7 @@ public:
 
 如果 s 中没有子字符串可以转化成 t 中对应的子字符串，则返回 0。
 
-4. [x] [水果成篮](https://leetcode.cn/problems/fruit-into-baskets/description/)
+### [水果成篮](https://leetcode.cn/problems/fruit-into-baskets/description/) <Badge type="tip" text="已解决" />
 你正在探访一家农场，农场从左到右种植了一排果树。这些树用一个整数数组 fruits 表示，其中 fruits[i] 是第 i 棵树上的水果 种类 。
 
 你想要尽可能多地收集水果。然而，农场的主人设定了一些严格的规矩，你必须按照要求采摘水果：
