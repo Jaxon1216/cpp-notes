@@ -8,10 +8,10 @@ hero:
   actions:
     - theme: brand
       text: "继续上次学习"
-      link: "/DataStructure/String/note.md"
+      link: "/HDU/SequentialList/note.md"
     - theme: alt
       text: "浏览目录"
-      link: "/Leetcode/BinarySearch/note.md"
+      link: "/Leetcode/BinarySearch/BinarySearch.md"
 ---
 
 <style>
@@ -117,25 +117,67 @@ hero:
 <div class="recent-notes-container">
   <h2 class="recent-title">📅 最近更新笔记</h2>
   <div class="recent-list">
-    <a class="recent-item" href="/DataStructure/String/note">
+    <a class="recent-item" href="/HDU/SequentialList/note">
+      <span class="note-title">笔记</span>
+      <span class="note-meta">
+        <span class="note-category">📂 顺序表</span>
+        <span class="note-time">🕒 12/03 22:23</span>
+      </span>
+    </a>
+    <a class="recent-item" href="/HDU/Queue/queue">
+      <span class="note-title">queue</span>
+      <span class="note-meta">
+        <span class="note-category">📂 队列</span>
+        <span class="note-time">🕒 12/03 22:17</span>
+      </span>
+    </a>
+    <a class="recent-item" href="/HDU/String/note">
       <span class="note-title">笔记</span>
       <span class="note-meta">
         <span class="note-category">📂 串</span>
-        <span class="note-time">🕒 12/03 15:00</span>
+        <span class="note-time">🕒 12/03 22:17</span>
+      </span>
+    </a>
+    <a class="recent-item" href="/HDU/Stack/note">
+      <span class="note-title">笔记</span>
+      <span class="note-meta">
+        <span class="note-category">📂 栈</span>
+        <span class="note-time">🕒 12/03 22:17</span>
+      </span>
+    </a>
+    <a class="recent-item" href="/HDU/SinglyLinkedList/note">
+      <span class="note-title">笔记</span>
+      <span class="note-meta">
+        <span class="note-category">📂 单向链表</span>
+        <span class="note-time">🕒 12/03 22:17</span>
       </span>
     </a>
     <a class="recent-item" href="/Leetcode/Intro/note">
       <span class="note-title">笔记</span>
       <span class="note-meta">
         <span class="note-category">📂 入门题单</span>
-        <span class="note-time">🕒 12/03 14:59</span>
+        <span class="note-time">🕒 12/03 22:17</span>
       </span>
     </a>
-    <a class="recent-item" href="/Leetcode/SlidingWindow/note">
-      <span class="note-title">笔记</span>
+    <a class="recent-item" href="/Leetcode/SlidingWindow/定长">
+      <span class="note-title">定长</span>
       <span class="note-meta">
         <span class="note-category">📂 滑动窗口</span>
-        <span class="note-time">🕒 12/03 14:58</span>
+        <span class="note-time">🕒 12/03 22:17</span>
+      </span>
+    </a>
+    <a class="recent-item" href="/Leetcode/SlidingWindow/不定长">
+      <span class="note-title">不定长</span>
+      <span class="note-meta">
+        <span class="note-category">📂 滑动窗口</span>
+        <span class="note-time">🕒 12/03 22:03</span>
+      </span>
+    </a>
+    <a class="recent-item" href="/Leetcode/BinarySearch/BinarySearch">
+      <span class="note-title">BinarySearch</span>
+      <span class="note-meta">
+        <span class="note-category">📂 二分查找</span>
+        <span class="note-time">🕒 12/03 15:03</span>
       </span>
     </a>
     <a class="recent-item" href="/PTA/onlinetest">
@@ -145,25 +187,11 @@ hero:
         <span class="note-time">🕒 12/02 22:05</span>
       </span>
     </a>
-    <a class="recent-item" href="/Leetcode/BinarySearch/note">
-      <span class="note-title">笔记</span>
-      <span class="note-meta">
-        <span class="note-category">📂 二分查找</span>
-        <span class="note-time">🕒 12/02 22:04</span>
-      </span>
-    </a>
-    <a class="recent-item" href="/STL/note">
-      <span class="note-title">笔记</span>
+    <a class="recent-item" href="/STL/STL">
+      <span class="note-title">STL</span>
       <span class="note-meta">
         <span class="note-category">📂 STL</span>
         <span class="note-time">🕒 11/17 21:01</span>
-      </span>
-    </a>
-    <a class="recent-item" href="/HDU/summary">
-      <span class="note-title">summary</span>
-      <span class="note-meta">
-        <span class="note-category">📂 HDU</span>
-        <span class="note-time">🕒 11/04 19:53</span>
       </span>
     </a>
     <a class="recent-item" href="/articles/basicK">
@@ -180,18 +208,11 @@ hero:
         <span class="note-time">🕒 10/31 01:11</span>
       </span>
     </a>
-    <a class="recent-item" href="/DataStructure/confusion">
+    <a class="recent-item" href="/HDU/confusion">
       <span class="note-title">confusion</span>
       <span class="note-meta">
-        <span class="note-category">📂 数据结构</span>
+        <span class="note-category">📂 HDU</span>
         <span class="note-time">🕒 10/05 22:18</span>
-      </span>
-    </a>
-    <a class="recent-item" href="/DataStructure/Queue/note">
-      <span class="note-title">笔记</span>
-      <span class="note-meta">
-        <span class="note-category">📂 队列</span>
-        <span class="note-time">🕒 09/19 14:40</span>
       </span>
     </a>
     <a class="recent-item" href="/如何调试">
@@ -201,21 +222,7 @@ hero:
         <span class="note-time">🕒 09/18 16:09</span>
       </span>
     </a>
-    <a class="recent-item" href="/DataStructure/SinglyLinkedList/note">
-      <span class="note-title">笔记</span>
-      <span class="note-meta">
-        <span class="note-category">📂 单向链表</span>
-        <span class="note-time">🕒 09/17 18:00</span>
-      </span>
-    </a>
-    <a class="recent-item" href="/DataStructure/Stack/note">
-      <span class="note-title">笔记</span>
-      <span class="note-meta">
-        <span class="note-category">📂 栈</span>
-        <span class="note-time">🕒 09/17 18:00</span>
-      </span>
-    </a>
-    <a class="recent-item" href="/DataStructure/SinglyLinkedList/问题汇总">
+    <a class="recent-item" href="/HDU/SinglyLinkedList/问题汇总">
       <span class="note-title">问题汇总</span>
       <span class="note-meta">
         <span class="note-category">📂 单向链表</span>
