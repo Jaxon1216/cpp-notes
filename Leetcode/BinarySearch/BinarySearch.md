@@ -67,4 +67,146 @@ public:
 - 当查找 **<x** 或 **≤x** 时，如果不存在，lowerBound 返回 0，减 1 后得到 **-1**
 
 
-## [咒语和药水](https://leetcode.cn/problems/successful-pairs-of-spells-and-potions/solutions/1595712/by-endlesscheng-1kbp/) <Badge type="tip" text="未解决" />
+## [咒语和药水](https://leetcode.cn/problems/successful-pairs-of-spells-and-potions/solutions/1595712/by-endlesscheng-1kbp/) <Badge type="tip" text="已解决" />
+输入：spells = [5,1,3], potions = [1,2,3,4,5], success = 7
+输出：[4,0,3]
+解释：
+- 第 0 个咒语：5 * [1,2,3,4,5] = [5,10,15,20,25] 。总共 4 个成功组合。
+- 第 1 个咒语：1 * [1,2,3,4,5] = [1,2,3,4,5] 。总共 0 个成功组合。
+- 第 2 个咒语：3 * [1,2,3,4,5] = [3,6,9,12,15] 。总共 3 个成功组合。
+所以返回 [4,0,3] 。
+
+--- 
+- 我的超时思路是先乘法预处理（溢出），然后双层循环遍历（超时），二分查找找答案；
+- 需要进行数学上的思考，分析发现，先对potions排序，二分查找大于等于success/mi的，然后计数
+
+改进之后
+```cpp
+public:
+    vector<int> successfulPairs(vector<int>& spells, vector<int>& potions, long long success) {
+        // target根据mi来变
+        sort(potions.begin(),potions.end());
+        int m = spells.size(), n = potions.size();
+        for(int i = 0; i < m; i++){
+            long long t = (long long)(success+spells[i]-1) / spells[i];
+            //这里是向上取整除法，而默认除法是向下取整
+            spells[i] = n - lower_bound(potions,t);
+        }
+        return spells;
+
+    }
+};
+```
+而灵神版本
+```cpp
+class Solution {
+public:
+    vector<int> successfulPairs(vector<int>& spells, vector<int>& potions, long long success) {
+        ranges::sort(potions);
+        for (int& x : spells) { // 原地修改
+            x = potions.end() - ranges::lower_bound(potions, 1.0 * success / x);
+        }
+        return spells;
+    }
+};
+```
+
+`ranges` 是 C++20 的新特性，它让算法调用更简洁（如 `ranges::sort(vec)` 替代 `sort(vec.begin(), vec.end())`）。虽然传统 `sort` 也能用，但 `ranges` 写法更直观且能与 `ranges::lower_bound` 等保持代码风格统一。
+## 最常用的三组 `ranges` 函数
+
+### 1. **查找与排序类** - 算法题最常用
+
+#### `ranges::sort` - 排序
+```cpp
+// 语法：ranges::sort(容器, [比较函数])
+std::vector<int> nums = {5, 3, 1, 4, 2};
+std::ranges::sort(nums);                    // nums 变为 [1, 2, 3, 4, 5]
+```
+
+#### `ranges::lower_bound` - 二分查找下界
+```cpp
+// 语法：ranges::lower_bound(已排序容器, 目标值)
+auto it = std::ranges::lower_bound(nums, 3);  // 指向第一个 ≥3 的位置
+// *it = 3, it - nums.begin() = 2
+```
+
+#### `ranges::find` - 线性查找
+```cpp
+// 语法：ranges::find(容器, 目标值)
+auto it = std::ranges::find(nums, 4);         // 指向第一个值为4的元素
+// *it = 4, it - nums.begin() = 3
+```
+
+#### `ranges::binary_search` - 二分判断存在
+```cpp
+// 语法：ranges::binary_search(已排序容器, 目标值)
+bool found = std::ranges::binary_search(nums, 2);  // found = true
+```
+
+---
+
+### 2. **视图（Views）类** - 数据处理神器
+
+#### `views::filter` - 过滤
+```cpp
+// 语法：容器 | views::filter(条件函数)
+auto evens = nums | std::views::filter([](int x){ return x%2==0; });
+// evens 包含 [2, 4]（懒计算）
+```
+
+#### `views::transform` - 映射转换
+```cpp
+// 语法：容器 | views::transform(转换函数)
+auto squares = nums | std::views::transform([](int x){ return x*x; });
+// squares 包含 [1, 4, 9, 16, 25]（懒计算）
+```
+
+#### `views::take` / `views::drop` - 取前n个/跳过前n个
+```cpp
+// 语法：容器 | views::take(n) / views::drop(n)
+auto first3 = nums | std::views::take(3);   // 包含 [1, 2, 3]
+auto after2 = nums | std::views::drop(2);   // 包含 [3, 4, 5]
+```
+
+---
+
+### 3. **统计与修改类** - 数据处理常用
+
+#### `ranges::count_if` - 条件计数
+```cpp
+// 语法：ranges::count_if(容器, 条件函数)
+int cnt = std::ranges::count_if(nums, [](int x){ return x>2; });
+// cnt = 3（元素3,4,5）
+```
+
+#### `ranges::reverse` - 反转
+```cpp
+// 语法：ranges::reverse(容器)
+std::ranges::reverse(nums);                 // nums 变为 [5, 4, 3, 2, 1]
+```
+
+#### `ranges::max_element` - 找最大值位置
+```cpp
+// 语法：ranges::max_element(容器)
+auto max_it = std::ranges::max_element(nums);  // 指向最大值
+// *max_it = 5, max_it - nums.begin() = 0
+```
+
+---
+
+### 最实用组合示例
+
+```cpp
+// 处理数据：过滤偶数 → 平方 → 取前2个
+std::vector<int> data = {1, 2, 3, 4, 5, 6};
+auto result = data 
+    | std::views::filter([](int x){ return x%2==0; })  // [2, 4, 6]
+    | std::views::transform([](int x){ return x*x; })   // [4, 16, 36]
+    | std::views::take(2);                             // [4, 16]
+
+for (int x : result) {
+    std::cout << x << " ";  // 输出: 4 16
+}
+```
+
+**记住**：视图操作是懒计算的，不创建新容器，性能好！
