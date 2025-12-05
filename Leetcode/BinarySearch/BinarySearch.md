@@ -210,3 +210,45 @@ for (int x : result) {
 ```
 
 **记住**：视图操作是懒计算的，不创建新容器，性能好！
+
+## [返回两个数组的距离值](https://leetcode.cn/problems/find-the-distance-value-between-two-arrays/)<Badge type="tip" text="常复习" />
+给你两个整数数组 arr1 ， arr2 和一个整数 d ，请你返回两个数组之间的 距离值 。
+
+「距离值」 定义为符合此距离要求的元素数目：对于元素 arr1[i] ，不存在任何元素 arr2[j] 满足 |arr1[i]-arr2[j]| <= d 。
+```cpp
+class Solution {
+public:
+    int findTheDistanceValue(vector<int>& arr1, vector<int>& arr2, int d) {
+        //每轮a1不变，a2变，那么由题条件得出a2i的所有元素都不能在[a1i - d, a1i +d]里;计数
+        //关键是不知道传入什么参数作为target，
+        //在 arr 中二分查找 ≥x−d 的最小的数 y。如果 y 不存在，或者 y>x+d，则说明没有在 [x−d,x+d] 
+        int ans = 0;
+        ranges::sort(arr2);
+        for(auto x : arr1){
+            auto it = ranges::lower_bound(arr2, x - d);
+            if(it == arr2.end()||*it > x + d){
+                ans++;
+            }
+        }
+        return ans;
+
+    }
+};
+```
+
+## [和有限的最长子序列](https://leetcode.cn/problems/longest-subsequence-with-limited-sum/description/)<Badge type="tip" text="常复习" />
+- 原地求前缀和
+- upper_bound
+```cpp
+class Solution {
+public:
+    vector<int> answerQueries(vector<int>& nums, vector<int>& queries) {
+        ranges::sort(nums);
+        partial_sum(nums.begin(), nums.end(), nums.begin()); // 原地求前缀和
+        for (int& q : queries) { // 用 queries 保存答案
+            q = ranges::lower_bound(nums, q+0.5) - nums.begin();
+        }
+        return queries;
+    }
+};
+```
