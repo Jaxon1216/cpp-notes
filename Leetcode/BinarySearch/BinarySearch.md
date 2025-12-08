@@ -145,76 +145,13 @@ bool found = std::ranges::binary_search(nums, 2);  // found = true
 
 ---
 
-### 2. **视图（Views）类** - 数据处理神器
-
-#### `views::filter` - 过滤
-```cpp
-// 语法：容器 | views::filter(条件函数)
-auto evens = nums | std::views::filter([](int x){ return x%2==0; });
-// evens 包含 [2, 4]（懒计算）
-```
-
-#### `views::transform` - 映射转换
-```cpp
-// 语法：容器 | views::transform(转换函数)
-auto squares = nums | std::views::transform([](int x){ return x*x; });
-// squares 包含 [1, 4, 9, 16, 25]（懒计算）
-```
-
-#### `views::take` / `views::drop` - 取前n个/跳过前n个
-```cpp
-// 语法：容器 | views::take(n) / views::drop(n)
-auto first3 = nums | std::views::take(3);   // 包含 [1, 2, 3]
-auto after2 = nums | std::views::drop(2);   // 包含 [3, 4, 5]
-```
-
----
-
-### 3. **统计与修改类** - 数据处理常用
-
-#### `ranges::count_if` - 条件计数
-```cpp
-// 语法：ranges::count_if(容器, 条件函数)
-int cnt = std::ranges::count_if(nums, [](int x){ return x>2; });
-// cnt = 3（元素3,4,5）
-```
-
-#### `ranges::reverse` - 反转
-```cpp
-// 语法：ranges::reverse(容器)
-std::ranges::reverse(nums);                 // nums 变为 [5, 4, 3, 2, 1]
-```
-
-#### `ranges::max_element` - 找最大值位置
-```cpp
-// 语法：ranges::max_element(容器)
-auto max_it = std::ranges::max_element(nums);  // 指向最大值
-// *max_it = 5, max_it - nums.begin() = 0
-```
-
----
-
-### 最实用组合示例
-
-```cpp
-// 处理数据：过滤偶数 → 平方 → 取前2个
-std::vector<int> data = {1, 2, 3, 4, 5, 6};
-auto result = data 
-    | std::views::filter([](int x){ return x%2==0; })  // [2, 4, 6]
-    | std::views::transform([](int x){ return x*x; })   // [4, 16, 36]
-    | std::views::take(2);                             // [4, 16]
-
-for (int x : result) {
-    std::cout << x << " ";  // 输出: 4 16
-}
-```
-
-**记住**：视图操作是懒计算的，不创建新容器，性能好！
 
 ## [返回两个数组的距离值](https://leetcode.cn/problems/find-the-distance-value-between-two-arrays/)<Badge type="tip" text="常复习" />
 给你两个整数数组 arr1 ， arr2 和一个整数 d ，请你返回两个数组之间的 距离值 。
 
 「距离值」 定义为符合此距离要求的元素数目：对于元素 arr1[i] ，不存在任何元素 arr2[j] 满足 |arr1[i]-arr2[j]| <= d 。
+- 查找静态值
+
 ```cpp
 class Solution {
 public:
@@ -249,6 +186,41 @@ public:
             q = ranges::lower_bound(nums, q+0.5) - nums.begin();
         }
         return queries;
+    }
+};
+```
+
+## [比较字符串最字母出现频次](https://leetcode.cn/problems/compare-strings-by-frequency-of-the-smallest-character/description/)<Badge type="tip" text="未解决" />
+定义一个函数 f(s)，统计 s  中（按字典序比较）最小字母的出现频次 ，其中 s 是一个非空字符串。
+例如，若 s = "dcce"，那么 f(s) = 2，因为字典序最小字母是 "c"，它出现了 2 次。
+现在，给你两个字符串数组待查表 queries 和词汇表 words 。对于每次查询 queries[i] ，需统计 words 中满足 f(queries[i]) < f(W) 的 词的数目 ，W 表示词汇表 words 中的每个词。
+请你返回一个整数数组 answer 作为答案，其中每个 answer[i] 是第 i 次查询的结果。
+- 不知道在哪运用二分查找
+    - 每次模拟，比较的都是数字，所以对不变的那一组，进行排序
+
+- 统计同一元素的频次，应当想到map的互异性
+- 模拟发现，最终比较的是次数，所以可以预处理掉
+思路：定义f函数，预处理不变量words，排序二分查找；
+```cpp
+class Solution {
+    int f(string s){
+        map<char,int> mp;
+        for(auto& k :s) mp[k]++;
+        return mp.begin()->second;
+    }
+public:
+    vector<int> numSmallerByFrequency(vector<string>& queries, vector<string>& words) {
+       //思路：定义f函数，预处理不变量words数组，排序二分查找
+       vector<int> words_tmp,ans;
+       for(auto& s:words){
+            words_tmp.push_back(f(s));
+       }
+       ranges::sort(words_tmp);
+       for(int i = 0; i < queries.size(); i++){
+            int j = f(queries[i]);
+            ans.push_back(words_tmp.end()-ranges::lower_bound(words_tmp,j+1));
+       }
+       return ans;
     }
 };
 ```
