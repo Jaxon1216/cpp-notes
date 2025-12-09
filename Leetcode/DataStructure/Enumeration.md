@@ -26,6 +26,8 @@
 输入：nums = [2,7,11,15], target = 9
 输出：[0,1]
 解释：因为 nums[0] + nums[1] == 9 ，返回 [0, 1] 。
+- 维护左的关键————map的更新和find函数；
+
 ```cpp
 class Solution {
 public:
@@ -39,6 +41,59 @@ public:
             }
             idx[nums[j]] = j; // 保存 nums[j] 和 j
         }
+    }
+};
+```
+
+## [好数对](https://leetcode.cn/problems/number-of-good-pairs/description/)<Badge type="tip" text="多思考" />
+给你一个整数数组 nums 。
+
+如果一组数字 (i,j) 满足 nums[i] == nums[j] 且 i < j ，就可以认为这是一组 好数对 。
+
+返回好数对的数目。
+
+- 特征1:j之前的每个数字出现的频次需要记录
+```cpp
+class Solution {
+public:
+    int numIdenticalPairs(vector<int>& nums) {
+        int ans = 0;
+        unordered_map<int, int> cnt;
+        for (int x : nums) { // x = nums[j]
+            // 此时 cnt[x] 表示之前遍历过的 x 的个数，加到 ans 中
+            // 如果先执行 cnt[x]++，再执行 ans += cnt[x]，就把 i=j 这种情况也统计进来了，算出的答案会偏大
+            ans += cnt[x];
+            cnt[x]++;
+        }
+        return ans;
+    }
+};
+```
+
+## [配对问题](https://leetcode.cn/problems/largest-positive-integer-that-exists-with-its-negative/description/)<Badge type="tip" text="常复习" />
+给你一个 不包含 任何零的整数数组 nums ，找出自身与对应的负数都在数组中存在的最大正整数 k 。
+
+返回正整数 k ，如果不存在这样的整数，返回 -1 。
+示例 1：
+输入：nums = [-1,2,-3,3]
+输出：3
+解释：3 是数组中唯一一个满足题目要求的 k 
+- 特征：检查存在
+- 特征：配对问题，，如果用map把负数变成正数，会导致信息丢失；
+- O（1）查找
+立刻想到set
+```cpp
+class Solution {
+public:
+    int findMaxK(vector<int>& nums) {
+        unordered_set<int> s(nums.begin(), nums.end());
+        int ans = -1;
+        for (int num : nums) {
+            if (num > 0 && s.count(-num)) {
+                ans = max(ans, num);
+            }
+        }
+        return ans;
     }
 };
 ```
