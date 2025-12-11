@@ -97,3 +97,82 @@ public:
     }
 };
 ```
+
+## [买股票最佳时机](https://leetcode.cn/problems/best-time-to-buy-and-sell-stock/)<Badge type="tip" text="学优化" />
+- 特征：遍历+查询
+```cpp
+class Solution {
+public:
+    //我的时间复杂度是nlogn
+    /*
+     //特征：左侧最好有顺序，不能当天买卖，map
+    //遍历，更新答案，set存储
+    int ans = 0;
+    set<int> st;
+    for(int j = 0; j < prices.size(); j++){
+        if(!st.empty()) {
+        auto it = st.begin();
+        ans = max(ans,prices[j]- *it);
+        }
+        st.insert(prices[j]);
+    }
+    return ans;
+    */
+//先更新答案再维护最小值，可以保证遍历到的数字在最小值之后；
+    int maxProfit(vector<int>& prices) {
+        int ans = 0;
+        int min_price = prices[0];
+        for (int p : prices) {
+            ans = max(ans, p - min_price);
+            min_price = min(min_price, p);
+        }
+        return ans;
+    }
+};
+```
+
+
+## [](https://leetcode.cn/problems/maximum-distance-in-arrays/description/)<Badge type="tip" text="常复习" />
+给定 m 个数组，每个数组都已经按照升序排好序了。
+
+现在你需要从两个不同的数组中选择两个整数（每个数组选一个）并且计算它们的距离。两个整数 a 和 b 之间的距离定义为它们差的绝对值 |a-b| 。
+- 特征：当前的最值受到之前的最值的影响，所以需要维护左边
+- 掌握：二元数组的遍历，贪心思想
+- Max函数
+- 假如这个二元数组的每个行数组没有顺序排列怎么办？
+```cpp
+for (auto &row : arrays) {
+    sort(row.begin(), row.end());
+}
+```
+我的错误答案
+```cpp
+class Solution {
+public:
+    int maxDistance(vector<vector<int>>& arrays) {
+        //特征：二维，遍历时需维护前面的
+        //初始化mintmp，maxtmp，
+        // for遍历，ans = 当前最大 - 历史最小，or abs（当前最小 - 历史最大），更新历史
+        int ans = 0,mintmp = arrays[0].front(),maxtmp = arrays[0].back();
+        for(auto& v : arrays){
+            ans = max(abs(v.front()-maxtmp),v.back()-mintmp,ans);
+            maxtmp = max(maxtmp,v.back());
+            mintmp = min(mintmp,v.front());
+        }
+        return ans;
+    }
+};
+/usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/stl_algobase.h:306:11: error: called object type 'int' is not a function or function 
+```
+第一点（两选一）默认的取max只能两个数比较
+```text
+① 两两取 max（最常见）
+ans = max(ans, max(abs(v.front()-maxtmp), v.back()-mintmp));
+② 用 initializer_list 版本（C++11+）
+这个更简洁：
+ans = max({ans, abs(v.front()-maxtmp), v.back()-mintmp});
+```
+第二点，更新逻辑可能会让第一组的值变成答案
+```cpp
+    for (int i = 1; i < arrays.size(); i++) {
+```

@@ -1746,4 +1746,70 @@ struct Student {
 };
 ```
 
+# 补充：
 
+## 初始化构造
+STL 大多数容器都支持 区间构造函数，方便从别的容器快速拷贝数据：
+```CPP
+vector<int> v2(v1.begin(), v1.end());
+set<int> s(v.begin(), v.end());
+unordered_set<int> s(nums.begin(), nums.end());
+map<int,int> m(v.begin(), v.end());//（前提 pair 类型兼容）
+```
+
+## 随机访问方式 
+讲了区间构造，自然而然涉及到区间访问，我们已经学过迭代器，访问差异见下表：
+| 容器                                                | 迭代器类型          | 能否用 `it + n`  | 说明                |
+| ------------------------------------------------- | -------------- | ------------- | ----------------- |
+| `vector` / `string` / `deque`                     | **随机访问迭代器**    | ✔ 可以 `it + n` | 支持加减整数            |
+| `list` / `forward_list`                           | **双向 / 单向迭代器** | ❌ 不可以         | 必须用 `next(it, n)` |
+| `set` / `map` / `unordered_set` / `unordered_map` | **双向迭代器**      | ❌ 不可以         | 必须用 `next(it, n)` |
+为什么不能给 set / map 直接加数字？
+
+因为它们底层是 红黑树，不是连续内存
+→ 迭代器不能“跳 n 格”。
+必须一个个走，所以需要 std::next()。
+
+而 vector/string 底层是数组
+→ 随便跳：it + n 合法。
+
+；
+unordered_set 可以 it + n 吗？
+
+❌ 绝对不行。
+
+unordered_set 底层是哈希桶列表，不连续，不支持随机访问。
+
+你必须用：
+
+auto it = next(s.begin(), k);
+
+📝 总结一句话记住
+
+➡ 连续容器（vector/string/deque）用 it + n
+➡ 非连续容器（set/map/unordered_系列/list）用 next(it, n)
+
+## 关于map和set的初始化
+
+在 C++ 里，`map` 和 `set` 看起来很像，都是基于红黑树实现的关联容器，但它们的行为有一个关键差别：**map 在访问不存在的 key 时会自动创建一个元素，而 set 完全不会。**
+如果set为空，就用解引用迭代器的方式访问，会导致**未定义行为UB**
+原因很简单：
+`map` 提供了下标操作符 `operator[]`。当你写 `mp[key]` 时，如果 key 不存在，`map` 会自动插入一条记录 `{key, mapped_type()}`。对于 `int`，默认值就是 `0`，所以 `mp[x]` 会产生一个新元素。
+
+而 `set` 的元素只有 key，没有 value，也没有提供 `operator[]`。它只支持 `insert`、`find` 这类查找与插入操作。访问不存在的元素只会得到 `end()`，绝不会自动创建。
+
+同理，`unordered_map` 也会自动插入，`unordered_set` 则不会。
+
+一句话总结：
+
+* **map / unordered_map：访问不存在的 key → 自动创建，值为默认初始化**
+* **set / unordered_set：绝不自动创建，只能显式 insert**
+
+这就是它们在使用上的核心差别。
+
+| 容器              | 是否会自动创建 key | 说明                               |
+| --------------- | ----------- | -------------------------------- |
+| `map`           | ✔ 会         | `operator[]` 插入 `{key, value=0}` |
+| `unordered_map` | ✔ 会         | 同样插入 `{key, 0}`                  |
+| `set`           | ❌ 不会        | 没有 operator[]，不能自动创建             |
+| `unordered_set` | ❌ 不会        | “查不到”不会插入任何东西                    |
