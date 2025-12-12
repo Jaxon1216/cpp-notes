@@ -132,7 +132,7 @@ public:
 ```
 
 
-## [](https://leetcode.cn/problems/maximum-distance-in-arrays/description/)<Badge type="tip" text="常复习" />
+## [距离最值](https://leetcode.cn/problems/maximum-distance-in-arrays/description/)<Badge type="tip" text="常复习" />
 给定 m 个数组，每个数组都已经按照升序排好序了。
 
 现在你需要从两个不同的数组中选择两个整数（每个数组选一个）并且计算它们的距离。两个整数 a 和 b 之间的距离定义为它们差的绝对值 |a-b| 。
@@ -175,4 +175,101 @@ ans = max({ans, abs(v.front()-maxtmp), v.back()-mintmp});
 第二点，更新逻辑可能会让第一组的值变成答案
 ```cpp
     for (int i = 1; i < arrays.size(); i++) {
+```
+
+
+# 枚举中间
+## [元素和最小的山形三元组](https://leetcode.cn/problems/minimum-sum-of-mountain-triplets-ii/description/)<Badge type="tip" text="模版题" />
+给你一个下标从 0 开始的整数数组 nums 。
+如果下标三元组 (i, j, k) 满足下述全部条件，则认为它是一个 山形三元组 ：
+i < j < k
+nums[i] < nums[j] 且 nums[k] < nums[j]
+请你找出 nums 中 元素和最小 的山形三元组，并返回其 元素和 。如果不存在满足条件的三元组，返回 -1 。
+示例 1：
+输入：nums = [8,6,1,5,3]
+输出：9
+解释：三元组 (2, 3, 4) 是一个元素和等于 9 的山形三元组，因为： 
+- 2 < 3 < 4
+- nums[2] < nums[3] 且 nums[4] < nums[3]
+这个三元组的元素和等于 nums[2] + nums[3] + nums[4] = 9 。可以证明不存在元素和小于 9 的山形三元组。
+
+特征：
+- 下标升序排列，需要维护左右最值，
+- 本题模版：初始化后缀最小值数组（在右侧，j从左往右，后缀从右往左），边更新答案边更新前缀最小值，注意边界，三元的中间变量大于0，后缀最小大于1
+```cpp
+class Solution {
+public:
+    int minimumSum(vector<int> &nums) {
+        int n = nums.size();
+        vector<int> suf(n); // 后缀最小值
+        suf[n - 1] = nums[n - 1];
+        for (int i = n - 2; i > 1; i--) {
+            suf[i] = min(suf[i + 1], nums[i]);
+        }
+
+        int ans = INT_MAX;
+        int pre = nums[0]; // 前缀最小值
+        for (int j = 1; j < n - 1; j++) {
+            if (pre < nums[j] && nums[j] > suf[j + 1]) { // 山形
+                ans = min(ans, pre + nums[j] + suf[j + 1]); // 更新答案,注意这个j+1
+            }
+            pre = min(pre, nums[j]);
+        }
+        return ans == INT_MAX ? -1 : ans;
+    }
+};
+```
+
+## [统计特殊三元组](https://leetcode.cn/problems/count-special-triplets/description/)<badge type = "tip" text = "学思路"/>
+```text
+给你一个整数数组 nums。
+特殊三元组 定义为满足以下条件的下标三元组 (i, j, k)：
+0 <= i < j < k < n，其中 n = nums.length
+nums[i] == nums[j] * 2
+nums[k] == nums[j] * 2
+返回数组中 特殊三元组 的总数。
+由于答案可能非常大，请返回结果对 109 + 7 取余数后的值。
+输入： nums = [8,4,2,8,4]
+
+输出： 2
+
+解释：
+
+共有两个特殊三元组：
+
+(i, j, k) = (0, 1, 3)
+nums[0] = 8, nums[1] = 4, nums[3] = 8
+nums[0] = nums[1] * 2 = 4 * 2 = 8
+nums[3] = nums[1] * 2 = 4 * 2 = 8
+(i, j, k) = (1, 2, 4)
+nums[1] = 4, nums[2] = 2, nums[4] = 4
+nums[1] = nums[2] * 2 = 2 * 2 = 4
+nums[4] = nums[2] * 2 = 2 * 2 = 4
+```
+- const int MOD, 
+- 1LL* 可以理解成 (long long)
+- 这里的查询方法，直接用下标索引
+- 本题题解的精妙之处在于用map同时关联了值和频次
+- 对于一个中间量，不同组合总数是左边的个数乘以右边的个数
+```cpp
+可否动态模拟一下：class Solution {
+public:
+    int specialTriplets(vector<int>& nums) {
+        const int MOD = 1'000'000'007;//只是更美观，
+        unordered_map<int, int> suf;
+        for (int x : nums) {
+            suf[x]++;
+        }
+
+        long long ans = 0;
+        unordered_map<int, int> pre;
+        for (int x : nums) { // x = nums[j]
+            suf[x]--; // 撤销
+            // 现在 pre 中的是 [0,j-1]，suf 中的是 [j+1,n-1]
+            ans += 1LL * pre[x * 2] * suf[x * 2];
+            pre[x]++;
+        }
+        return ans % MOD;
+    }
+};
 ```

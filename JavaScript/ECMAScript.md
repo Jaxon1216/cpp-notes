@@ -2,7 +2,7 @@ ECMAScript（简称 ES，全称European Computer Manufacturers Association”（
 ）是 JavaScript 的官方语言标准，由 ECMA International 组织制定。从经典的 ES5 到划时代的 ES6，再到每年更新的 ES2024，它定义了语法、核心 API 和语言特性。浏览器和 Node.js 中的 JavaScript 都是其实现。了解 ECMAScript，就是理解现代 JavaScript 发展的核心脉络。
 
 ---
-# 黑马学习总结
+# 黑马
 
 ## day1
 - document.write,alert,console.log
@@ -54,8 +54,34 @@ ECMAScript（简称 ES，全称European Computer Manufacturers Association”（
     - space-evenly：均匀分布，所有间隔相等
 - align-items: flex-end;           /* 重点：交叉轴对齐方式 */
     - flex-end：底部对齐
-    - 这里是让柱子从底部开始向上生长
+    - day3案例里是让柱子从底部开始向上生长
     - stretch：拉伸填满容器高度（默认）
     - flex-start：顶部对齐
     - center：垂直居中
     - baseline：基线对齐
+## day5
+1. 函数命名，动词加小驼峰
+2. 函数传参可设默认值，否则可能会出现NaN
+3. return返回多个数值可使用[]
+4. 变量命名冲突的时候，就近原则
+5. 匿名函数，立即执行函数，防止变量污染，无需调用立即执行，但是本质上已经调用了
+6. 逻辑中断，开发中会遇到以下写法
+```JavaScript
+function getSum(x,y){
+    x = x || 0;
+    y = y || 0;
+    console.log(x+y);
+}
+getSum(1,2);
+```
+- && 左边false就短路；｜｜左边true就短路
+    - (false||a++) //22不执行a++
+    - console.log(11&&22) //22
+    - (true||a++) //不执行a++
+    - (11||22) //11
+    - (false1||false2) //false2
+- 显式转换为Boolean：'',0,undefined,null,false,NaN都是false其他都是true
+- 隐式：
+    - 有字符串的加法：''+1 //"1"
+    - 减法："" 变成0
+    - null经过数字变换变成0，undefined经过数字变换变成NaN；
