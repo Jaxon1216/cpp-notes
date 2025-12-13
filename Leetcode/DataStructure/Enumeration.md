@@ -219,6 +219,9 @@ public:
     }
 };
 ```
+- 这题变式
+(i, j, k) 的值等于 (nums[i] - nums[j]) * nums[k] 。找最值
+
 
 ## [统计特殊三元组](https://leetcode.cn/problems/count-special-triplets/description/)<badge type = "tip" text = "学思路"/>
 ```text
