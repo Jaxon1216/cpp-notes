@@ -276,3 +276,53 @@ public:
     }
 };
 ```
+
+## [长度为3的回文子序列](https://leetcode.cn/problems/unique-length-3-palindromic-subsequences/description/)<Badge type="tip" text="需二刷" />
+```text
+给你一个字符串 s ，返回 s 中 长度为 3 的不同回文子序列 的个数。
+即便存在多种方法来构建相同的子序列，但相同的子序列只计数一次。
+回文 是正着读和反着读一样的字符串。
+子序列 是由原字符串删除其中部分字符（也可以不删除）且不改变剩余字符之间相对顺序形成的一个新字符串。
+例如，"ace" 是 "abcde" 的一个子序列。
+示例 1：
+输入：s = "aabca"
+输出：3
+解释：长度为 3 的 3 个回文子序列分别是：
+- "aba" ("aabca" 的子序列)
+- "aaa" ("aabca" 的子序列)
+- "aca" ("aabca" 的子序列)
+```
+思路： 
+- 长度为3，左中右，枚举中间
+方法：
+- 枚举中间位 + 前缀存在性 + 后缀计数 + **二维去重**
+```cpp
+class Solution {
+public:
+    int countPalindromicSubsequence(string s) {
+        //子串用中间遍历查询的方式，左中右三个，前后缀计数，特征：前后缀相同
+        //如果枚举到了同样的回文子串怎么办？用二维数组判断，因为是aba的形式，实际上是二元关系
+        //伪代码：
+        //初始化后缀
+        //外循环，mid遍历，边遍历边初始化前缀
+        //内循环左右侧alpha相同否，pre是否出现过，suf是否出现过，【mid，alpha】是否未出现过
+        int ans = 0,n = s.size();
+        int suf[26]{};
+        for(int i = 1; i < n; i++) suf[s[i]-'a']++;
+        bool pre[26]{};
+        bool had[26][26]{};
+        for(int i= 1; i < n-1; i++){//注意边界
+            suf[s[i]-'a']--;// // 撤销 mid 的计数，suf 剩下的就是后缀 [i+1,n-1] 每个字母的个数
+            pre[s[i-1]-'a'] = true;// 记录前缀 [0,i-1] 有哪些字母
+            for(int alpha = 0; alpha < 26; alpha++){
+                if(pre[alpha]&&suf[alpha]&&!had[s[i]-'a'][alpha]){
+                    had[s[i]-'a'][alpha] = true;
+                    ans++;
+                }
+            }
+
+        } 
+        return ans;
+    }
+};
+```
