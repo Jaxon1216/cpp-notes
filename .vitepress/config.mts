@@ -4,12 +4,19 @@ import path from 'path'
 
 // Directory name mapping (English -> Chinese)
 const DIR_MAPPING = {
-  'DataStructure': '数据结构',
+  'HDU': '数据结构',
   'Leetcode': 'Leetcode',
   'PTA': 'PTA',
   'STL': 'STL',
+  'JavaScript': 'JavaScript',
+  'CSS': 'CSS',
+  'articles': '文章',
+  'Miscellaneous': '杂项',
+  'PurpleBook': '紫书',
+  'TipsAndTricks': '技巧',
   'BinarySearch': '二分查找',
   'SlidingWindow': '滑动窗口',
+  'DataStructure': '数据结构',
   'Intro': '入门题单',
   'String': '串',
   'SinglyLinkedList': '单向链表',
@@ -19,22 +26,44 @@ const DIR_MAPPING = {
   'SequentialList': '顺序表'
 }
 
-function getDisplayName(name) {
+// Directories to ignore
+const IGNORE = ['.vitepress', 'node_modules', '.git', 'scripts', 'package.json', 'package-lock.json', 'README.md', 'index.md', '.gitignore', '.DS_Store']
+
+function getDisplayName(name: string): string {
   return DIR_MAPPING[name] || name
 }
 
 // Helper to find first MD file for nav links
-function findFirstFile(dir) {
+function findFirstFile(dir: string): string | null {
   try {
     const items = fs.readdirSync(dir)
+    // Sort items: lowercase first, then alphabetically
+    items.sort((a, b) => {
+      const aLower = a[0] === a[0].toLowerCase()
+      const bLower = b[0] === b[0].toLowerCase()
+      if (aLower && !bLower) return -1
+      if (!aLower && bLower) return 1
+      return a.localeCompare(b)
+    })
+    
+    // First, try to find a direct MD file (prefer files over directories)
     for (const item of items) {
+      if (item.startsWith('.') || item.endsWith('.cpp') || item.endsWith('.exe')) continue
+      const fullPath = path.join(dir, item)
+      const stat = fs.statSync(fullPath)
+      if (!stat.isDirectory() && item.endsWith('.md')) {
+        return fullPath
+      }
+    }
+    
+    // If no direct MD file, recurse into directories
+    for (const item of items) {
+      if (item.startsWith('.') || item.endsWith('.cpp') || item.endsWith('.exe')) continue
       const fullPath = path.join(dir, item)
       const stat = fs.statSync(fullPath)
       if (stat.isDirectory()) {
         const found = findFirstFile(fullPath)
         if (found) return found
-      } else if (item.endsWith('.md')) {
-        return path.join(dir, item)
       }
     }
   } catch (e) {
@@ -43,29 +72,29 @@ function findFirstFile(dir) {
   return null
 }
 
-function getLinkForDir(dirName) {
+function getLinkForDir(dirName: string): string {
   const root = process.cwd()
   const fullPath = path.join(root, dirName)
   if (fs.existsSync(fullPath)) {
     const file = findFirstFile(fullPath)
     if (file) {
-      return '/' + path.relative(root, file)
+      return '/' + path.relative(root, file).replace(/\\/g, '/').replace(/\.md$/, '')
     }
   }
   return '/'
 }
 
 // Helper to get direct children directories for dropdown
-function getDirDropdownItems(dirName) {
+function getDirDropdownItems(dirName: string): Array<{text: string, link: string}> {
   const root = process.cwd()
   const fullPath = path.join(root, dirName)
   if (!fs.existsSync(fullPath)) return []
   
   const items = fs.readdirSync(fullPath)
-  const dropdown = []
+  const dropdown: Array<{text: string, link: string}> = []
   
   items.forEach(item => {
-    if (item.startsWith('.') || item === 'draft.cpp' || item.endsWith('.cpp')) return
+    if (item.startsWith('.') || item.endsWith('.cpp') || item.endsWith('.exe')) return
     const itemPath = path.join(fullPath, item)
     const stat = fs.statSync(itemPath)
     
@@ -80,10 +109,49 @@ function getDirDropdownItems(dirName) {
   return dropdown
 }
 
+// Auto-generate navigation from root directories
+function generateNav() {
+  const root = process.cwd()
+  const items = fs.readdirSync(root)
+  const nav: Array<any> = [{ text: '首页', link: '/' }]
 
-function getSidebarItems(dir, base) {
+  // Sort directories
+  const dirs = items.filter(item => {
+    if (IGNORE.includes(item) || item.startsWith('.')) return false
+    const fullPath = path.join(root, item)
+    return fs.existsSync(fullPath) && fs.statSync(fullPath).isDirectory()
+  }).sort()
+
+  dirs.forEach(dir => {
+    const dropdownItems = getDirDropdownItems(dir)
+    const firstLink = getLinkForDir(dir)
+    
+    if (firstLink === '/') return // Skip empty directories
+
+    if (dropdownItems.length > 0) {
+      // Has subdirectories, create dropdown menu
+      nav.push({
+        text: getDisplayName(dir),
+        items: [
+          { text: '概览', link: firstLink },
+          ...dropdownItems
+        ]
+      })
+    } else {
+      // No subdirectories, simple link
+      nav.push({
+        text: getDisplayName(dir),
+        link: firstLink
+      })
+    }
+  })
+
+  return nav
+}
+
+function getSidebarItems(dir: string, base: string): Array<any> {
   const items = fs.readdirSync(dir)
-  const result = []
+  const result: Array<any> = []
 
   // Sort items: directories first, then files
   items.sort((a, b) => {
@@ -119,7 +187,7 @@ function getSidebarItems(dir, base) {
       
       result.push({
         text: text,
-        link: `${base}${item}`
+        link: `${base}${item.replace('.md', '')}`
       })
     }
   })
@@ -128,9 +196,8 @@ function getSidebarItems(dir, base) {
 
 function generateSidebar() {
   const root = process.cwd()
-  const ignore = ['.vitepress', 'node_modules', '.git', 'scripts', 'package.json', 'package-lock.json', 'README.md', 'index.md', '.gitignore', '.DS_Store']
   
-  const sidebar = {}
+  const sidebar: Record<string, Array<any>> = {}
   
   // Default sidebar for root
   sidebar['/'] = []
@@ -138,8 +205,9 @@ function generateSidebar() {
   const items = fs.readdirSync(root)
   
   items.forEach(item => {
-    if (ignore.includes(item)) return
+    if (IGNORE.includes(item) || item.startsWith('.')) return
     const fullPath = path.join(root, item)
+    if (!fs.existsSync(fullPath)) return
     const stat = fs.statSync(fullPath)
     
     if (stat.isDirectory()) {
@@ -155,25 +223,7 @@ export default defineConfig({
   description: "Personal Algorithm & CPP Notes",
   ignoreDeadLinks: true, // Avoid build errors for missing links
   themeConfig: {
-    nav: [
-      { text: '首页', link: '/' },
-      { 
-        text: 'Leetcode', 
-        items: [
-          { text: '概览', link: getLinkForDir('Leetcode') },
-          ...getDirDropdownItems('Leetcode')
-        ]
-      },
-      { 
-        text: '数据结构', 
-        items: [
-           { text: '概览', link: getLinkForDir('DataStructure') },
-           ...getDirDropdownItems('DataStructure')
-        ]
-      },
-      { text: 'PTA', link: getLinkForDir('PTA') },
-      { text: 'STL', link: getLinkForDir('STL') },
-    ],
+    nav: generateNav(),
     sidebar: generateSidebar(),
     socialLinks: [
       { icon: 'github', link: 'https://github.com/Jaxon1216/cpp-notes' }
