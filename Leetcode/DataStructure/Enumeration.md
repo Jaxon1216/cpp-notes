@@ -326,3 +326,52 @@ public:
     }
 };
 ```
+
+
+
+
+
+## [直角三角形](https://leetcode.cn/problems/right-triangles/description/)<Badge type="tip" text="需二刷" />
+给定一个仅由 0 和 1 组成的二维网格 grid。
+若三个值为 1 的格子能够构成一个直角三角形，且直角的两条边分别平行于坐标轴（一条水平、一条竖直），则称其为一个有效的直角三角形。
+请统计网格中所有满足条件的直角三角形数量。
+思路：
+方法
+- 乘法原理
+```cpp
+class Solution {
+public:
+    // 思路：
+    // 以每个值为 1 的格子作为直角顶点
+    // 同一行可选 (行内 1 的数量 - 1) 个点
+    // 同一列可选 (列内 1 的数量 - 1) 个点
+    // 根据乘法原理，贡献为 行数 * 列数
+    // 先预处理每一列的 1 的数量，再累加每个直角点的贡献
+
+    long long numberOfRightTriangles(vector<vector<int>>& grid) {
+        int n = grid[0].size();
+
+        // col_sum[j]：第 j 列中除自身外的 1 的数量（提前减 1）
+        vector<int> col_sum(n, -1);
+        for (auto& row : grid) {
+            for (int j = 0; j < n; j++) {
+                col_sum[j] += row[j];
+            }
+        }
+
+        long long ans = 0;
+        for (auto& row : grid) {
+            // row_sum：当前行中除自身外的 1 的数量
+            int row_sum = reduce(row.begin(), row.end()) - 1;
+
+            for (int j = 0; j < row.size(); j++) {
+                if (row[j] == 1) {
+                    // 当前格子作为直角顶点的贡献
+                    ans += row_sum * col_sum[j];
+                }
+            }
+        }
+        return ans;
+    }
+};
+```
