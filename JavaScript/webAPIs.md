@@ -1,4 +1,4 @@
-# day1DOM元素获取与操作
+## day1DOM元素获取与操作
 - DOM对象，DOM树
 - 获取`querySelectorALL`,`queryselector`
 - 属性`innerText`不解析标签,`innnerHTML`解析标签
@@ -9,7 +9,7 @@
 - 间歇函数`setInterval`,m级别单位set对应clear
 - 案例：轮播图定时版，注意li标签下标从1开始 
 
-# day2DOM事件基础
+## day2DOM事件基础
 - 事件监听`addEventListener`
 - 事件类型:`click,mouseenter,mouseleave`,表单`focus,blur`,键盘`Keydown,keyup`,表单输入触发`input`
 - 事件对象：回调函数的第一个参数，一般命名`event,ev,e`比如
@@ -29,7 +29,7 @@
     - `querySelectorALL`得到伪数组，有下标
 
 
-# day3DOM进阶
+## day3DOM进阶
 1. 表单全选反选案例：
     - 如果点了大框框那用循环给所有小框打true or false，对于大框框绑定点击事件，函数：`cks[i].checked = checkedAll.checked//or this.checked`
     - css伪类选择器，`.ck:checked`，只选择了被勾选的复选框,所以小复选框的状态都被勾了，那就大框也true
@@ -155,3 +155,89 @@ input[type=text] {
 ...
 slector..('input[value]')
 ```
+
+
+
+## day4DOM节点&移动端滑动
+
+1. 日期对象
+- 实例化`const date = new date()`;
+  - 实例化之后可以用方法`get`+`Fullyear`/`Month`/`Date`/`Day`/`Hours`/`Minutes`/`Seconds`,边界从0开始；
+  - 老外星期0就是星期天
+  - 借助三目运算符，加上`+`号的隐式转换来自动补零`'0'`;
+  - 定时器来自动刷新，隔一秒调用一次
+  - tolocal系列函数
+- 时间戳，直接隐式转换`+new date()`/实例化之后`dom.getTime()`/当前`dom.now()`
+  - 倒计时涉及`setInterval`
+  - 注意是ms级别，不要忘记`/1000`
+  - 定时器前面调用一下获取时间的函数可以取消默认数值
+
+2. 节点操作
+- DOM节点
+  - 元素节点：所有标签，主要操作这个，增删改查
+  - 属性节点：链接，id，calss
+  - 文本节点
+- 查找节点，基于dom树呈现的关系
+  - parentNode，跟链表里的`cur->next`差不多
+  - 子节点`childNodes`/一般用`children`但是不是节点，得到的是**伪数组**
+  - 兄弟节点`nextElementSibiling`，也可以改成`previous`
+- 创建节点`document.createElement('div')`
+  - `father.appendChild(son)`,`father.insertBefore(son,beforewhich?)`
+  - 应用：之前做的学成在线案例，现在不需要在html里面画盒子了，可以直接把数组搞到数组，for循环到length，创建盒子
+```JavaScript
+// 1. 获取ul元素
+const ul = document.querySelector('.box-bd ul')
+
+// 2. 遍历数据数组
+for (let i = 0; i < data.length; i++) {
+    // 创建li元素
+    const li = document.createElement('li')
+    
+    // 使用模板字符串填充内容
+    li.innerHTML = `
+        <a href="#">
+            <img src=${data[i].src} alt="">
+            <h4>${data[i].title}</h4>
+            <div class="info">
+                <span>高级</span> • <span>${data[i].num}</span>人在学习
+            </div>
+        </a>
+    `
+    
+    // 将li添加到ul中
+    ul.appendChild(li)
+}
+```
+我的疑问：怎么确定下来每行多少个盒子？
+```css
+/* 容器设置 */
+.box-bd ul {
+    width: 1225px;  /* ul的宽度 */
+}
+
+.box-bd ul li {
+    float: left;    /* 左浮动 */
+    width: 228px;   /* 每个li的固定宽度 */
+    margin-right: 15px;  /* 右侧间距 */
+    margin-bottom: 15px; /* 底部间距 */
+}
+```
+
+- 克隆与删除节点
+  - `ul.appendChild(ul.children[0].cloneNode(true))`如果默认不写true，是浅克隆，只拿过来标签，
+  - `removeChild(child)`
+
+3. M端（mobile）事件
+- `touchstart`/`touchend`/
+- [www.swiper.com.cn](www.swiper.com.cn)
+  - 选-下载-看文档-引入-调试
+
+4. 案例：
+- form
+  - 阻止submit事件，因为点击提交不需要跳转，button点击会冒泡到表单？
+  - 表单`reset`
+- 手写渲染函数，因为增加和删除都需要渲染
+  - 清空`tbody`
+  - 循环，模版字符串`tr.innerHTML`，对象属性
+  - `tbody.appendChild(tr)`
+  - 调用函数
