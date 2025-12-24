@@ -233,11 +233,233 @@ for (let i = 0; i < data.length; i++) {
   - 选-下载-看文档-引入-调试
 
 4. 案例：
-- form
-  - 阻止submit事件，因为点击提交不需要跳转，button点击会冒泡到表单？
+- 录入模块：form，表单验证
+  - 阻止submit事件，因为点击提交不需要跳转，button点击会冒泡到表单？否则页面刷新,数据直接丢失
   - 表单`reset`
-- 手写渲染函数，因为增加和删除都需要渲染
+  - 有一个空 → 整个提交失败 return 直接终止函数
+```JavaScript
+info.addEventListener('submit', function (e) {})
+e.preventDefault()
+for (...) {
+  if (items[i].value === '') {
+    return alert('输入内容不能为空')
+  }
+}
+```
+- 渲染模块：手写渲染函数，因为增加和删除都需要渲染
   - 清空`tbody`
   - 循环，模版字符串`tr.innerHTML`，对象属性
   - `tbody.appendChild(tr)`
   - 调用函数
+```JavaScript
+function render() {
+  tbody.innerHTML = ''
+  for (...) {
+    const tr = document.createElement('tr')
+    tr.innerHTML = `...`
+    tbody.appendChild(tr)
+  }
+}
+```
+- 删除模块：
+```html
+<a data-id=${i}>删除</a>
+```
+- 事件委托:因为删除按钮是 动态生成的，不能提前给每个 a 绑定事件
+```JavaScript
+tbody.addEventListener('click', ...)//跟day3的电梯导航差不多
+arr.splice(e.target.dataset.id, 1)
+render()
+```
+
+## day5BOM
+1. window对象
+- `setTimeout(fn,time)`赋值返回一个🆔 /`clearTimeout(time)`
+- JS执行机制
+  - V8引擎，JS解析器
+  - 单线程，同一时间只做一件事
+  - 同步和异步，执行各个流程的顺序与排列顺序一致/不一致；
+  -  同步任务，执行栈；异步任务，添加到任务队列中，通过回调函数实现，第一种事件click，resize等，第二种资源加载load，error，第三种定时器
+  - JS里面没有调用栈
+  - 先执行执行栈中的同步任务，再执行任务队列的异步任务；被读取的异步任务结束等待状态进入执行栈开始执行；成为事件循环
+- location对象
+  - 实现定时跳转`location.href`赋值操作
+  - `search`属性,比如拿到提交表单后的`?`后面的内容
+  - `location.hash`取html后面的`#`后面的内容
+  - `location.reload(true)`方法
+- navigator对象
+  - 获取浏览器信息，`userAgent`属性，比如以下立即执行函数
+```JavaScript
+// 检测 userAgent（浏览器信息）
+    !(function () {
+      const userAgent = navigator.userAgent
+      // 验证是否为Android或iPhone
+      const android = userAgent.match(/(Android);?[\s\/]+([\d.]+)?/)
+      const iphone = userAgent.match(/(iPhone\sOS)\s([\d_]+)/)
+      // 如果是Android或iPhone，则跳转至移动站点
+      if (android || iphone) {
+        location.href = 'http://m.itcast.cn'
+      }
+    })();
+    // !(function () { })();
+    !function () { }()
+```
+通过立即执行函数，在页面加载时检测浏览器设备类型，并根据 userAgent 判断是否为移动端，从而实现 PC / 移动端页面自动跳转，同时体现了作用域隔离、正则匹配、浏览器对象模型和工程化写法。
+````md
+### IIFE 前为什么要加 ; 或 !
+
+#### 问题
+JS 有自动分号机制（ASI），但**不可靠**。  
+如果上一行没分号，而下一行以 `(` 开头，JS 会把两行当成一行解析。
+
+```js
+var a = 10
+(function () {})()   // ❌ 会被当成：10(...)
+````
+#### 解决
+在 IIFE 前**主动断句**：
+```js
+var a = 10;
+(function () {})()   // ✅ 分号断开
+```
+或使用一元运算符：
+```js
+var a = 10
+!function () {}()    // ✅ 隐形分号，强制隔离
+```
+#### 结论
+`;` 或 `!` 的唯一作用：
+**防止 IIFE 被解析为上一行代码的继续**
+- history对象
+  - `back()`/`foward()`/`go`
+
+2. 本地存储
+- 差不多就是`<string,string>`类型的`unordered_map`
+要记住的:
+```js
+localStorage.setItem(key, value)   // 增 / 改
+localStorage.getItem(key)          // 查
+localStorage.removeItem(key)       // 删
+localStorage.clear()               // 全删
+```
+| 存储方式           | 是否持久     | 作用范围   |
+| -------------- | -------- | ------ |
+| localStorage   | ✅ 持久     | 同一域名   |
+| sessionStorage | ❌ 关标签页失效 | 当前标签页  |
+| cookie         | 可配置      | 可随请求发送 |
+
+
+3. localStorage 存储复杂数据类型（对象 / 数组）
+
+#### 核心限制
+localStorage **只能存 string**，不能直接存对象或数组。
+
+```js
+localStorage.setItem('obj', obj) // ❌ "[object Object]"
+```
+
+#### 正确做法：JSON 序列化
+
+#### 存（对象 → 字符串）
+
+```js
+localStorage.setItem('obj', JSON.stringify(obj))
+```
+
+#### 取（字符串 → 对象）
+
+```js
+const str = localStorage.getItem('obj')
+const data = JSON.parse(str)
+```
+
+### 固定流程
+
+```txt
+对象 → JSON.stringify → localStorage
+localStorage → JSON.parse → 对象
+```
+
+4. 数组map,join
+- map可以把原元素改变值,`return ele + ...`,
+- join可以把数组返回字符串，默认有`,`，可以改`
+
+5. 综合案例
+- DOM元素获取模块
+```js
+// 获取表格主体
+const tbody = document.querySelector('tbody')
+
+// 获取表单和表单字段
+const info = document.querySelector('.info')
+const items = info.querySelectorAll('[name]')//这个是
+```
+
+- 渲染模块
+```js
+const trArr = arr.map(function(item, i){//这个item就相当于cpp中的(auto & x : v）中的x;map会循环遍历，但是会返回新数组；
+  return `
+    <tr>
+      <td>${item.stuId}</td>
+      <td>${item.uname}</td>
+      <td>${item.age}</td>
+      <td>${item.gender}</td>
+      <td>${item.salary}</td>
+      <td>${item.city}</td>
+      <td>
+        <a href="javascript:" data-id=${i}>删除</a>
+      </td>
+    </tr>
+  `
+})
+
+```
+- 录入模块
+```js
+info.addEventListener('submit', function (e) {
+  // 阻止表单默认提交行为
+  e.preventDefault()
+  
+  // 创建新学生对象
+  const obj = {}
+  
+  // 注意，生成序号：如果数组不为空，取最后一个学号+1，否则从1开始
+  obj.stuId = arr.length ? arr[arr.length - 1].stuId + 1 : 1
+  
+// 遍历表单字段，收集数据并进行非空验证
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i]
+    if (item.value === '') {
+      return alert('输入内容不能为空')
+    }
+    // 动态为对象添加属性
+    obj[item.name] = item.value
+  }
+  // 将新数据添加到数组
+  arr.push(obj)
+  // 保存到本地存储
+  localStorage.setItem('student-data', JSON.stringify(arr))
+  // 重新渲染页面
+  render()
+  // 重置表单
+  this.reset()
+  ```
+
+  - 删除模块
+```js
+tbody.addEventListener('click', function (e) {
+  if (e.target.tagName === 'A') {
+    // 获取要删除的数据索引（通过 data-id 属性）
+    const index = e.target.dataset.id
+    
+    // 从数组中删除对应数据
+    arr.splice(index, 1)
+    
+    // 更新本地存储
+    localStorage.setItem('student-data', JSON.stringify(arr))
+    
+    // 重新渲染页面
+    render()
+  }
+})
+```
