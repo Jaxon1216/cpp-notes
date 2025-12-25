@@ -26,7 +26,13 @@ const DIR_MAPPING = {
   'Stack': '栈',
   'StackAndQueue': '栈和队列',
   'Queue': '队列',
-  'SequentialList': '顺序表'
+  'SequentialList': '顺序表',
+  'Frontend': '前端',
+  'cs-core': '计算机基础',
+  'Misc': '其他',
+  'dataStruct': '数据结构',
+  'networks': '计算机网络',
+  'os': '操作系统'
 };
 
 function getDisplayName(name) {

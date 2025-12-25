@@ -463,3 +463,80 @@ tbody.addEventListener('click', function (e) {
   }
 })
 ```
+
+
+## day6
+### 正则，元字符
+#### 一个用户名/账号校验的经典前端场景：
+用户在 input 中输入内容
+失焦（blur）时触发校验
+用正则判断是否合法
+合法 → 绿色提示
+不合法 → 红色提示
+- 
+```js
+const reg = /^[a-zA-Z0-9-_]{6,16}$/
+```
+| 符号  | 含义            |
+| --- | ------------- |
+| `^` | 匹配**字符串开始位置** |
+| `$` | 匹配**字符串结束位置** |
+
+- 正则的落地
+```js
+input.addEventListener('blur', function () {
+    if (reg.test(this.value)) {
+        span.innerHTML = '输入正确'
+        span.className = 'right'
+    } else {
+        span.innerHTML = '请输入6~16位的英文数字下划线'
+        span.className = 'error'
+    }
+})
+```
+
+### 综合案例
+小兔鲜注册界面；
+- 正则检测
+```js
+function verifyName() {
+  const span = username.nextElementSibling // 获取输入框后的提示信息标签
+  const reg = /^[a-zA-Z0-9-_]{6,10}$/      // 定义正则规则
+
+  // 核心方法：reg.test() 返回 true/false
+  if (!reg.test(username.value)) {
+    span.innerText = '输入不合法,请输入6~10位'
+    return false // 校验失败，告诉后面不要提交
+  }
+  
+  span.innerText = '' // 校验成功，清空提示
+  return true
+}
+```
+- toggle
+```js
+const queren = document.querySelector('.icon-queren')
+queren.addEventListener('click', function () {
+  // 这里的 this 指向被点击的这个图标
+  this.classList.toggle('icon-queren2')
+})
+```
+- 提交拦截
+```js
+form.addEventListener('submit', function (e) {
+  // 1. 拦截协议勾选
+  if (!queren.classList.contains('icon-queren2')) {
+    alert('请勾选同意协议')
+    e.preventDefault() // 核心：阻止表单跳转/提交
+  }
+
+  // 2. 聚合校验：只要有一个返回 false，就阻止提交
+  // 利用了逻辑非 (!) 和函数返回值
+  if (!verifyName()) e.preventDefault()
+  if (!verifyPhone()) e.preventDefault()
+  if (!verifyCode()) e.preventDefault()
+  if (!verifyPwd()) e.preventDefault()
+  if (!verifyConfirm()) e.preventDefault()
+})
+```
+### 阶段案例
