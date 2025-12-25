@@ -43,7 +43,7 @@ function generateDashboard() {
 layout: home
 
 hero:
-  name: "CPP 学习笔记"
+  name: "学习笔记"
   text: "温故而知新"
   tagline: "持续积累，厚积薄发"
   actions:

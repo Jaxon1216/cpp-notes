@@ -219,7 +219,7 @@ function generateSidebar() {
 }
 
 export default defineConfig({
-  title: "CPP 学习笔记",
+  title: "学习笔记",
   description: "Personal Algorithm & CPP Notes",
   ignoreDeadLinks: true, // Avoid build errors for missing links
   themeConfig: {

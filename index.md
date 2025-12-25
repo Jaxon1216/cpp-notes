@@ -1,14 +1,5 @@
 ---
-layout: home
-
-hero:
-  name: "📝 CPP Note"
-  text: ""
-  tagline: "学习笔记"
-  actions:
-    - theme: brand
-      text: "继续学习"
-      link: "/CSS/display"
+layout: doc
 ---
 
 <style>
@@ -117,6 +108,24 @@ hero:
 <div class="directory-container">
   <div class="category-section">
     <div class="category-header">
+      <span>📂 JavaScript</span>
+      <span class="category-meta">2 篇</span>
+    </div>
+    <div class="tree-container">
+      <a class="tree-item tree-file depth-0" href="/JavaScript/ECMAScript">
+        <span class="tree-prefix"></span>
+        <span class="tree-name">ECMAScript</span>
+        <span class="tree-date">12/13</span>
+      </a>
+      <a class="tree-item tree-file depth-0" href="/JavaScript/webAPIs">
+        <span class="tree-prefix"></span>
+        <span class="tree-name">webAPIs</span>
+        <span class="tree-date">12/24</span>
+      </a>
+    </div>
+  </div>
+  <div class="category-section">
+    <div class="category-header">
       <span>📂 CSS</span>
       <span class="category-meta">4 篇</span>
     </div>
@@ -140,24 +149,6 @@ hero:
         <span class="tree-prefix"></span>
         <span class="tree-name">url</span>
         <span class="tree-date">12/14</span>
-      </a>
-    </div>
-  </div>
-  <div class="category-section">
-    <div class="category-header">
-      <span>📂 JavaScript</span>
-      <span class="category-meta">2 篇</span>
-    </div>
-    <div class="tree-container">
-      <a class="tree-item tree-file depth-0" href="/JavaScript/ECMAScript">
-        <span class="tree-prefix"></span>
-        <span class="tree-name">ECMAScript</span>
-        <span class="tree-date">12/13</span>
-      </a>
-      <a class="tree-item tree-file depth-0" href="/JavaScript/webAPIs">
-        <span class="tree-prefix"></span>
-        <span class="tree-name">webAPIs</span>
-        <span class="tree-date">12/22</span>
       </a>
     </div>
   </div>
@@ -320,14 +311,14 @@ hero:
         <span class="tree-prefix"></span>
         <span class="tree-name">单向链表/</span>
       </div>
-      <a class="tree-item tree-file depth-1" href="/HDU/SinglyLinkedList/note">
+      <a class="tree-item tree-file depth-1" href="/HDU/SinglyLinkedList/问题汇总">
         <span class="tree-prefix">├── </span>
-        <span class="tree-name">笔记</span>
+        <span class="tree-name">问题汇总</span>
         <span class="tree-date">12/03</span>
       </a>
-      <a class="tree-item tree-file depth-1" href="/HDU/SinglyLinkedList/问题汇总">
+      <a class="tree-item tree-file depth-1" href="/HDU/SinglyLinkedList/note">
         <span class="tree-prefix">└── </span>
-        <span class="tree-name">问题汇总</span>
+        <span class="tree-name">笔记</span>
         <span class="tree-date">12/03</span>
       </a>
       <div class="tree-item tree-dir depth-0">

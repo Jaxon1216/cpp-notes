@@ -234,16 +234,7 @@ function generateDashboard() {
     : '/';
 
   let content = `---
-layout: home
-
-hero:
-  name: "📝 CPP Note"
-  text: ""
-  tagline: "学习笔记"
-  actions:
-    - theme: brand
-      text: "继续学习"
-      link: "${continueLink}"
+layout: doc
 ---
 
 <style>
