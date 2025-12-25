@@ -243,47 +243,67 @@ function generateDashboard() {
 layout: doc
 ---
 
+<script setup>
+import { onMounted, onUnmounted } from 'vue'
+onMounted(() => {
+  document.body.classList.add('homepage')
+})
+onUnmounted(() => {
+  document.body.classList.remove('homepage')
+})
+</script>
+
 <style>
-:root {
-  --vp-home-hero-name-color: transparent;
-  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #bd34fe 30%, #41d1ff);
+/* 只在主页应用这些样式 */
+body.homepage .VPDoc .container,
+body.homepage .VPDoc .content,
+body.homepage .VPDoc .content-container {
+  max-width: none !important;
+  padding: 0 !important;
 }
 
-.VPHero {
-  padding-top: calc(var(--vp-nav-height) + 20px) !important;
-  padding-bottom: 20px !important;
+body.homepage .VPDoc .aside {
+  display: none !important;
 }
 
-.VPHomeHero .name {
-  font-size: 36px !important;
-  line-height: 44px !important;
-}
-
-.VPHomeHero .tagline {
-  font-size: 16px !important;
-  color: var(--vp-c-text-2);
+body.homepage .VPDoc,
+body.homepage .vp-doc {
+  padding: 0 !important;
 }
 
 .directory-container {
-  max-width: 900px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 20px 24px 60px;
+  padding: 16px 20px 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
 }
 
 .category-section {
-  margin-bottom: 32px;
+  background: var(--vp-c-bg-soft);
+  border-radius: 8px;
+  padding: 14px;
+  transition: all 0.2s ease;
+  border: 1px solid var(--vp-c-divider);
+}
+
+.category-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: var(--vp-c-brand);
 }
 
 .category-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--vp-c-text-1);
   padding-bottom: 8px;
   border-bottom: 1px solid var(--vp-c-divider);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .category-meta {
@@ -295,14 +315,14 @@ layout: doc
 
 .tree-container {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 14px;
-  line-height: 1.8;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 .tree-item {
   display: flex;
   align-items: center;
-  padding: 2px 0;
+  padding: 1px 0;
   color: var(--vp-c-text-2);
 }
 
@@ -344,6 +364,25 @@ layout: doc
 .depth-2 { padding-left: 40px; }
 .depth-3 { padding-left: 60px; }
 .depth-4 { padding-left: 80px; }
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .directory-container {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .directory-container {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 12px;
+  }
+  
+  .category-section {
+    padding: 12px;
+  }
+}
 </style>
 
 <div class="directory-container">
