@@ -468,12 +468,13 @@ tbody.addEventListener('click', function (e) {
 ## day6
 ### 正则，元字符
 #### 一个用户名/账号校验的经典前端场景：
+
 用户在 input 中输入内容
 失焦（blur）时触发校验
 用正则判断是否合法
 合法 → 绿色提示
 不合法 → 红色提示
-- 
+
 ```js
 const reg = /^[a-zA-Z0-9-_]{6,16}$/
 ```
@@ -539,4 +540,108 @@ form.addEventListener('submit', function (e) {
   if (!verifyConfirm()) e.preventDefault()
 })
 ```
-### 阶段案例
+## 阶段案例，几个模块
+- h5新特性:require
+
+
+
+### 模块一：顶部导航栏自动划出（滑动监听）
+
+```js
+(function () {
+  const sticky = document.querySelector('.sticky');
+  const header = document.querySelector('.xtx_header .wrapper');
+
+  const top = header.offsetTop + header.clientHeight;
+
+  window.addEventListener('scroll', function () {
+    const scrollTop = document.documentElement.scrollTop;
+    sticky.style.top = scrollTop >= top ? '0px' : '-80px';
+  });
+})();
+```
+### 模块二：放大镜效果
+- 事件委托
+- hover 小图,中图切换,大图背景切换
+```js
+const small = document.querySelector('.small');
+const middle = document.querySelector('.middle');
+const large = document.querySelector('.large');
+
+small.addEventListener('mouseover', function (e) {
+  if (e.target.tagName === 'IMG') {
+    this.querySelector('.active').classList.remove('active');
+    e.target.parentNode.classList.add('active');
+
+    middle.querySelector('img').src = e.target.src;
+    large.style.backgroundImage = `url(${e.target.src})`;
+  }
+});
+```
+
+- 中图/大图的显示与隐藏
+```js
+let timer = null;
+
+function show() {
+  clearTimeout(timer);
+  large.style.display = 'block';
+}
+
+function hide() {
+  timer = setTimeout(() => {
+    large.style.display = 'none';
+  }, 200);
+}
+
+middle.addEventListener('mouseenter', show);
+middle.addEventListener('mouseleave', hide);
+large.addEventListener('mouseenter', show);
+large.addEventListener('mouseleave', hide);
+```
+### 模块三：遮罩层移动 + 放大图联动（几何计算）
+- 遮罩跟随鼠标
+- 限制移动边界
+- 大图按比例反向移动
+```js
+middle.addEventListener('mousemove', function (e) {
+  let x = e.pageX - middle.getBoundingClientRect().left;
+  let y = e.pageY - middle.getBoundingClientRect().top - document.documentElement.scrollTop;
+
+  let mx = Math.min(Math.max(x - 100, 0), 200);
+  let my = Math.min(Math.max(y - 100, 0), 200);
+
+  layer.style.left = mx + 'px';
+  layer.style.top = my + 'px';
+
+  large.style.backgroundPositionX = -2 * mx + 'px';
+  large.style.backgroundPositionY = -2 * my + 'px';
+});
+```
+
+### 模版：单选链
+- matches
+- ?.运算符
+```js
+container.addEventListener('click', function (e) {
+  if (e.target.matches('span, img')) {
+    container.querySelector('.active')?.classList.remove('active');
+    //这个?.运算符：如果左边有值，就继续往下执行；如果是 null / undefined，立刻停下，不报错。
+    e.target.classList.add('active');
+  }
+});
+```
+
+| 需求 / 判断场景   | `matches` 写法                               | `tagName` 能否做到 | 说明                                |   |      |
+| ----------- | ------------------------------------------ | -------------- | --------------------------------- | - | ---- |
+| 判断是否为某个标签   | `e.target.matches('span')`                 | ✅ 可以           | 两者都能，但 `matches` 更统一              |   |      |
+| 判断多种标签      | `e.target.matches('span, img')`            | ❌ 不行           | `tagName` 只能一个个 `                 |   | ` 判断 |
+| 判断带某个 class | `e.target.matches('.item')`                | ❌ 不行           | `tagName` 完全不涉及 class             |   |      |
+| 标签 + class  | `e.target.matches('span.item')`            | ❌ 不行           | `tagName` 只能判断标签名                 |   |      |
+| 判断是否有属性     | `e.target.matches('[data-id]')`            | ❌ 不行           | 属性是 CSS 选择器能力                     |   |      |
+| 判断属性具体值     | `e.target.matches('[type="button"]')`      | ❌ 不行           | `tagName` 无法读取属性规则                |   |      |
+| 判断层级关系      | `e.target.matches('li > a')`               | ❌ 不行           | 需要 CSS 结构选择器                      |   |      |
+| 排除某些状态      | `e.target.matches('.item:not(.disabled)')` | ❌ 不行           | 逻辑判断能力更强                          |   |      |
+| 判断当前状态      | `e.target.matches('.active')`              | ❌ 不行           | 状态通常由 class 表达                    |   |      |
+| 事件委托通用判断    | `e.target.matches('.tab-item')`            | ❌ 不行           | 工程化事件委托核心用法                       |   |      |
+| 结构调整后无需改 JS | ✅ 是                                        | ❌ 否            | `matches` 面向“规则”，`tagName` 面向“结构” |   |      |
