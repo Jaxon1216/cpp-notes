@@ -271,6 +271,12 @@ body.homepage .vp-doc {
   padding: 0 !important;
 }
 
+/* 隐藏主页的更新时间 */
+body.homepage .VPDocFooter,
+body.homepage .VPLastUpdated {
+  display: none !important;
+}
+
 .directory-container {
   max-width: 1400px;
   margin: 0 auto;

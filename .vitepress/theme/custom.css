@@ -1,0 +1,35 @@
+/* 自定义样式 */
+
+/* 将文章页的更新时间固定到左下角 */
+body:not(.homepage) .VPDocFooter {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 10;
+  background: var(--vp-c-bg-soft);
+  padding: 8px 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--vp-c-divider);
+}
+
+body:not(.homepage) .VPDocFooter .VPLastUpdated {
+  margin: 0;
+  padding: 0;
+}
+
+body:not(.homepage) .VPDocFooter .VPLastUpdated .last-updated {
+  font-size: 13px;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  body:not(.homepage) .VPDocFooter {
+    position: static;
+    margin-top: 20px;
+    bottom: auto;
+    left: auto;
+    box-shadow: none;
+  }
+}
+

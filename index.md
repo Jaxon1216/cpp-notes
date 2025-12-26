@@ -30,6 +30,12 @@ body.homepage .vp-doc {
   padding: 0 !important;
 }
 
+/* 隐藏主页的更新时间 */
+body.homepage .VPDocFooter,
+body.homepage .VPLastUpdated {
+  display: none !important;
+}
+
 .directory-container {
   max-width: 1400px;
   margin: 0 auto;
@@ -147,6 +153,57 @@ body.homepage .vp-doc {
 <div class="directory-container">
   <div class="category-section">
     <div class="category-header">
+      <span>📂 前端</span>
+      <span class="category-meta">7 篇</span>
+    </div>
+    <div class="tree-container">
+      <div class="tree-item tree-dir depth-0">
+        <span class="tree-prefix"></span>
+        <span class="tree-name">CSS/</span>
+      </div>
+      <a class="tree-item tree-file depth-1" href="/Frontend/CSS/display">
+        <span class="tree-prefix">├── </span>
+        <span class="tree-name">display</span>
+        <span class="tree-date">12/25</span>
+      </a>
+      <a class="tree-item tree-file depth-1" href="/Frontend/CSS/Pseudo-elements">
+        <span class="tree-prefix">├── </span>
+        <span class="tree-name">Pseudo-elements</span>
+        <span class="tree-date">12/25</span>
+      </a>
+      <a class="tree-item tree-file depth-1" href="/Frontend/CSS/selectors">
+        <span class="tree-prefix">├── </span>
+        <span class="tree-name">selectors</span>
+        <span class="tree-date">12/25</span>
+      </a>
+      <a class="tree-item tree-file depth-1" href="/Frontend/CSS/url">
+        <span class="tree-prefix">└── </span>
+        <span class="tree-name">url</span>
+        <span class="tree-date">12/25</span>
+      </a>
+      <div class="tree-item tree-dir depth-0">
+        <span class="tree-prefix"></span>
+        <span class="tree-name">JavaScript/</span>
+      </div>
+      <a class="tree-item tree-file depth-1" href="/Frontend/JavaScript/ECMAScript">
+        <span class="tree-prefix">├── </span>
+        <span class="tree-name">ECMAScript</span>
+        <span class="tree-date">12/25</span>
+      </a>
+      <a class="tree-item tree-file depth-1" href="/Frontend/JavaScript/JSadvance">
+        <span class="tree-prefix">├── </span>
+        <span class="tree-name">JSadvance</span>
+        <span class="tree-date">12/26</span>
+      </a>
+      <a class="tree-item tree-file depth-1" href="/Frontend/JavaScript/webAPIs">
+        <span class="tree-prefix">└── </span>
+        <span class="tree-name">webAPIs</span>
+        <span class="tree-date">12/26</span>
+      </a>
+    </div>
+  </div>
+  <div class="category-section">
+    <div class="category-header">
       <span>📂 Leetcode</span>
       <span class="category-meta">11 篇</span>
     </div>
@@ -172,7 +229,7 @@ body.homepage .vp-doc {
       <a class="tree-item tree-file depth-1" href="/Leetcode/DataStructure/Enumeration">
         <span class="tree-prefix">├── </span>
         <span class="tree-name">Enumeration</span>
-        <span class="tree-date">12/25</span>
+        <span class="tree-date">12/26</span>
       </a>
       <a class="tree-item tree-file depth-1" href="/Leetcode/DataStructure/Heap">
         <span class="tree-prefix">├── </span>
@@ -226,52 +283,6 @@ body.homepage .vp-doc {
   </div>
   <div class="category-section">
     <div class="category-header">
-      <span>📂 前端</span>
-      <span class="category-meta">6 篇</span>
-    </div>
-    <div class="tree-container">
-      <div class="tree-item tree-dir depth-0">
-        <span class="tree-prefix"></span>
-        <span class="tree-name">CSS/</span>
-      </div>
-      <a class="tree-item tree-file depth-1" href="/Frontend/CSS/display">
-        <span class="tree-prefix">├── </span>
-        <span class="tree-name">display</span>
-        <span class="tree-date">12/25</span>
-      </a>
-      <a class="tree-item tree-file depth-1" href="/Frontend/CSS/Pseudo-elements">
-        <span class="tree-prefix">├── </span>
-        <span class="tree-name">Pseudo-elements</span>
-        <span class="tree-date">12/25</span>
-      </a>
-      <a class="tree-item tree-file depth-1" href="/Frontend/CSS/selectors">
-        <span class="tree-prefix">├── </span>
-        <span class="tree-name">selectors</span>
-        <span class="tree-date">12/25</span>
-      </a>
-      <a class="tree-item tree-file depth-1" href="/Frontend/CSS/url">
-        <span class="tree-prefix">└── </span>
-        <span class="tree-name">url</span>
-        <span class="tree-date">12/25</span>
-      </a>
-      <div class="tree-item tree-dir depth-0">
-        <span class="tree-prefix"></span>
-        <span class="tree-name">JavaScript/</span>
-      </div>
-      <a class="tree-item tree-file depth-1" href="/Frontend/JavaScript/ECMAScript">
-        <span class="tree-prefix">├── </span>
-        <span class="tree-name">ECMAScript</span>
-        <span class="tree-date">12/25</span>
-      </a>
-      <a class="tree-item tree-file depth-1" href="/Frontend/JavaScript/webAPIs">
-        <span class="tree-prefix">└── </span>
-        <span class="tree-name">webAPIs</span>
-        <span class="tree-date">12/25</span>
-      </a>
-    </div>
-  </div>
-  <div class="category-section">
-    <div class="category-header">
       <span>📂 其他</span>
       <span class="category-meta">3 篇</span>
     </div>
@@ -307,21 +318,8 @@ body.homepage .vp-doc {
   </div>
   <div class="category-section">
     <div class="category-header">
-      <span>📂 STL</span>
-      <span class="category-meta">1 篇</span>
-    </div>
-    <div class="tree-container">
-      <a class="tree-item tree-file depth-0" href="/STL/STL">
-        <span class="tree-prefix"></span>
-        <span class="tree-name">STL</span>
-        <span class="tree-date">12/13</span>
-      </a>
-    </div>
-  </div>
-  <div class="category-section">
-    <div class="category-header">
       <span>📂 文章</span>
-      <span class="category-meta">2 篇</span>
+      <span class="category-meta">3 篇</span>
     </div>
     <div class="tree-container">
       <a class="tree-item tree-file depth-0" href="/articles/algorithm">
@@ -333,6 +331,11 @@ body.homepage .vp-doc {
         <span class="tree-prefix"></span>
         <span class="tree-name">basicK</span>
         <span class="tree-date">11/06</span>
+      </a>
+      <a class="tree-item tree-file depth-0" href="/articles/STL">
+        <span class="tree-prefix"></span>
+        <span class="tree-name">STL</span>
+        <span class="tree-date">12/12</span>
       </a>
     </div>
   </div>
